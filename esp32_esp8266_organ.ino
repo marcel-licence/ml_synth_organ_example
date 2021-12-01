@@ -108,7 +108,61 @@ void setup()
 #if 0 /* set this to one to test the audio output with a noteOn event on startup */
     Organ_NoteOn(0, 60, 127);
 #endif
+
+#ifdef MIDI_VIA_USB_ENABLED
+    Core0TaskInit();
+#endif
 }
+
+#ifdef ESP32
+/*
+ * Core 0
+ */
+/* this is used to add a task to core 0 */
+TaskHandle_t Core0TaskHnd;
+
+inline
+void Core0TaskInit()
+{
+    /* we need a second task for the terminal output */
+    xTaskCreatePinnedToCore(Core0Task, "CoreTask0", 8000, NULL, 999, &Core0TaskHnd, 0);
+}
+
+void Core0TaskSetup()
+{
+    /*
+     * init your stuff for core0 here
+     */
+#ifdef MIDI_VIA_USB_ENABLED
+    UsbMidi_Setup();
+#endif
+}
+
+void Core0TaskLoop()
+{
+    /*
+     * put your loop stuff for core0 here
+     */
+#ifdef MIDI_VIA_USB_ENABLED
+    UsbMidi_Loop();
+#endif
+}
+
+void Core0Task(void *parameter)
+{
+    Core0TaskSetup();
+
+    while (true)
+    {
+        Core0TaskLoop();
+
+        /* this seems necessary to trigger the watchdog */
+        delay(1);
+        yield();
+    }
+}
+#endif
+
 
 void loop()
 {
@@ -138,7 +192,9 @@ void loop()
     int16_t sig = Organ_Process();
     //static int16_t sig = 0;
     //sig += 1024;
+
     i2s_write_stereo_samples_i16(&sig, &sig);
+
 #endif
 
     midi_cnt++;
@@ -149,9 +205,20 @@ void loop()
 #else
         Midi_Process();
 #endif
+#ifdef MIDI_VIA_USB_ENABLED
+        UsbMidi_ProcessSync();
+#endif
         midi_cnt = 0;
     }
 }
+
+#ifdef MIDI_VIA_USB_ENABLED
+void App_UsbMidiShortMsgReceived(uint8_t *msg)
+{
+    Midi_SendShortMessage(msg);
+    Midi_HandleShortMsg(msg, 8);
+}
+#endif
 
 /*
  * MIDI callbacks

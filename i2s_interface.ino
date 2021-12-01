@@ -152,7 +152,10 @@ bool i2s_write_stereo_samples_i16(int16_t *fl_sample, int16_t *fr_sample)
 
     sampleDataU.ch[0] = *fl_sample;
     sampleDataU.ch[1] = *fr_sample;
+
+    calcCycleCountPre();
     i2s_write(i2s_port_number, (const char *)&sampleDataU.sample, 4, &bytes_written, portMAX_DELAY);
+    calcCycleCount();
 
     if (bytes_written > 0)
     {

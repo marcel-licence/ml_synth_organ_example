@@ -67,6 +67,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_SIZE_16BIT
 #define SAMPLE_BUFFER_SIZE  48
 
+//#define MIDI_VIA_USB_ENABLED /* activate this when connected to the USB host breakout board */
+
 #define RXD2 16
 #define TXD2 17
 
