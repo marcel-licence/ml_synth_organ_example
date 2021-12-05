@@ -53,6 +53,10 @@
  * a uart compatible signal
  */
 
+#ifndef MIDI_SERIAL1_BAUDRATE
+#define MIDI_SERIAL1_BAUDRATE   31250
+#endif
+
 #ifndef MIDI_SERIAL2_BAUDRATE
 #define MIDI_SERIAL2_BAUDRATE   31250
 #endif
@@ -210,6 +214,9 @@ inline void Midi_HandleShortMsg(uint8_t *data, uint8_t cable __attribute__((unus
 
 void Midi_Setup()
 {
+#ifdef TEENSYDUINO
+    Serial1.begin(MIDI_SERIAL1_BAUDRATE);
+#else
 #ifdef MIDI_RX_PIN
 #ifdef MIDI_TX_PIN
     Serial2.begin(MIDI_SERIAL2_BAUDRATE, SERIAL_8N1, MIDI_RX_PIN, MIDI_TX_PIN);
@@ -217,6 +224,7 @@ void Midi_Setup()
     Serial2.begin(MIDI_SERIAL2_BAUDRATE, SERIAL_8N1, MIDI_RX_PIN);
 #endif
     pinMode(MIDI_RX_PIN, INPUT_PULLUP); /* can be connected to open collector output */
+#endif
 #endif
 }
 
@@ -314,7 +322,7 @@ void Midi_CheckSerial2(void)
 }
 
 inline
-void Midi_CheckSerial(void)
+void Midi_CheckSerial(HardwareSerial *ser)
 {
     /*
      * watchdog to avoid getting stuck by receiving incomplete or wrong data
@@ -325,49 +333,52 @@ void Midi_CheckSerial(void)
 
     //Choose Serial1 or Serial2 as required
 
-    if (Serial.available())
+    if (ser->available())
     {
-        uint8_t incomingByte = Serial.read();
+        while (ser->available())
+        {
+            uint8_t incomingByte = ser->read();
 
 #ifdef SWAP_SERIAL
-        Serial.write(incomingByte);
+            ser->write(incomingByte);
 #else
-        Serial.printf("%02x", incomingByte);
+            ser->printf("%02x", incomingByte);
 #endif
-        /* ignore live messages */
-        if ((incomingByte & 0xF0) == 0xF0)
-        {
-            return;
-        }
-
-        if (inMsgIndex == 0)
-        {
-            if ((incomingByte & 0x80) != 0x80)
+            /* ignore live messages */
+            if ((incomingByte & 0xF0) == 0xF0)
             {
-                inMsgIndex = 1;
+                return;
             }
-        }
 
-        inMsg[inMsgIndex] = incomingByte;
-        inMsgIndex += 1;
+            if (inMsgIndex == 0)
+            {
+                if ((incomingByte & 0x80) != 0x80)
+                {
+                    inMsgIndex = 1;
+                }
+            }
 
-        if ((inMsgIndex >= 3) || (((inMsg[0] == 0xD0) || (inMsg[0] == 0xC0)) && inMsgIndex >= 2))
-        {
+            inMsg[inMsgIndex] = incomingByte;
+            inMsgIndex += 1;
+
+            if ((inMsgIndex >= 3) || (((inMsg[0] == 0xD0) || (inMsg[0] == 0xC0)) && inMsgIndex >= 2))
+            {
 #ifndef SWAP_SERIAL
-            Serial.printf(">%02x %02x %02x\n", inMsg[0], inMsg[1], inMsg[2]);
+                ser->printf(">%02x %02x %02x\n", inMsg[0], inMsg[1], inMsg[2]);
 #endif
-            Midi_HandleShortMsg(inMsg, 0);
-            inMsgIndex = 0;
-        }
+                Midi_HandleShortMsg(inMsg, 0);
+                inMsgIndex = 0;
+            }
 
-        /*
-         * reset watchdog to allow new bytes to be received
-         */
+            /*
+             * reset watchdog to allow new bytes to be received
+             */
 #if 0
-        Serial.print("I received: ");
-        Serial.println(incomingByte, DEC);
+            ser->print("I received: ");
+            ser->println(incomingByte, DEC);
 #endif
-        inMsgWd = 0;
+            inMsgWd = 0;
+        }
     }
     else
     {
@@ -392,7 +403,10 @@ void Midi_Process()
     Midi_CheckSerial2();
 #endif
 #ifdef MIDI_RECV_FROM_SERIAL
-    Midi_CheckSerial();
+    Midi_CheckSerial(&Serial);
+#endif
+#ifdef TEENSYDUINO
+    Midi_CheckSerial(&Serial1);
 #endif
 }
 

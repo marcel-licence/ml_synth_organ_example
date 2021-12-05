@@ -54,12 +54,19 @@
 
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
-#else
+#endif
+
+#ifdef ESP32
 #include <WiFi.h>
 #endif
 
-
-
+#ifdef TEENSYDUINO
+#include <Audio.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+#include <SerialFlash.h>
+#endif
 
 void setup()
 {
@@ -83,18 +90,25 @@ void setup()
     Organ_Setup();
 
 
-
+#if (defined ESP8266) || (defined ESP32)
     WiFi.mode(WIFI_OFF);
+#endif
+
+#ifdef TEENSYDUINO
+    Teensy_Setup();
+#else
+    pinMode(LED_PIN, OUTPUT);
+    setup_Serial2();
+#endif
+
 #if 0 //ndef ESP8266
     btStop();
     esp_wifi_deinit();
 #endif
 
-    pinMode(LED_PIN, OUTPUT);
 
 
-    setup_Serial2();
-
+#if (defined ESP8266) || (defined ESP32)
 #ifdef I2S_NODAC
     I2S_init();
 #else
@@ -103,7 +117,7 @@ void setup()
 
     pinMode(2, INPUT); //restore GPIOs taken by i2s
     pinMode(15, INPUT);
-
+#endif
 
 #if 0 /* set this to one to test the audio output with a noteOn event on startup */
     Organ_NoteOn(0, 60, 127);
@@ -113,6 +127,30 @@ void setup()
     Core0TaskInit();
 #endif
 }
+
+
+#ifdef TEENSYDUINO
+
+const int ledPin = LED_PIN; /* pin configured in config.h */
+
+AudioPlayQueue           queue1;
+AudioPlayQueue           queue2;
+AudioOutputI2S           i2s1;
+AudioConnection          patchCord1(queue1, 0, i2s1, 0); /* left channel */
+AudioConnection          patchCord2(queue2, 0, i2s1, 1); /* right channel */
+
+static int16_t   sampleBuffer[AUDIO_BLOCK_SAMPLES];
+static int16_t   *queueTransmitBuffer;
+static int16_t   *queueTransmitBuffer2;
+
+void Teensy_Setup()
+{
+    AudioMemory(4);
+    pinMode(ledPin, OUTPUT);
+    Midi_Setup();
+}
+
+#endif /* TEENSYDUINO */
 
 #ifdef ESP32
 /*
@@ -164,20 +202,35 @@ void Core0Task(void *parameter)
 #endif
 
 
+void loop_2Hz()
+{
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));   // turn the LED on (HIGH is the voltage level)
+#ifdef CYCLE_MODULE_ENABLED
+    CyclePrint();
+#endif
+}
+
+
 void loop()
 {
     static int midi_cnt = 0; /*!< used to reduce MIDI processing time */
     static int led_cnt = 0; /*!< used for delay of the blinking LED */
 
+
+
     /*
      * generates a signal of 44100/256 -> ~172 Hz. If lower than we have buffer underruns -> audio drop outs
      */
-    if (led_cnt > 22050)
+    if (led_cnt >= 22050)
     {
         led_cnt = 0;
-        digitalWrite(LED_PIN, !digitalRead(LED_PIN));   // turn the LED on (HIGH is the voltage level)
+        loop_2Hz();
     }
+#ifdef TEENSYDUINO
+    led_cnt += AUDIO_BLOCK_SAMPLES;
+#else
     led_cnt++;
+#endif
 
 #ifdef ESP8266
     // I2S_Wait();
@@ -188,16 +241,54 @@ void loop()
         // Serial.printf("%d\n", sig);
         writeDAC(0x8000 + sig);
     }
-#else
+#endif /* ESP8266 */
+
+#ifdef ESP32
     int16_t sig = Organ_Process();
     //static int16_t sig = 0;
     //sig += 1024;
 
     i2s_write_stereo_samples_i16(&sig, &sig);
 
-#endif
+#endif /* ESP32 */
 
+#ifdef TEENSYDUINO
+    {
+#ifdef CYCLE_MODULE_ENABLED
+        calcCycleCountPre();
+#endif
+        queueTransmitBuffer = queue1.getBuffer(); /* blocking? */
+        queueTransmitBuffer2 = queue2.getBuffer();
+#ifdef CYCLE_MODULE_ENABLED
+        calcCycleCount();
+#endif
+        if (queueTransmitBuffer)
+        {
+            {
+                int32_t u32buf[AUDIO_BLOCK_SAMPLES];
+
+                Organ_Process_Buf(u32buf, AUDIO_BLOCK_SAMPLES);
+
+                for (size_t i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
+                {
+                    sampleBuffer[i] = (int16_t)((u32buf[i]));
+                }
+            }
+
+            memcpy(queueTransmitBuffer, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+            memcpy(queueTransmitBuffer2, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+
+            queue1.playBuffer();
+            queue2.playBuffer();
+        }
+    }
+#endif /* TEENSYDUINO */
+
+#ifdef TEENSYDUINO
+    midi_cnt += AUDIO_BLOCK_SAMPLES;
+#else
     midi_cnt++;
+#endif
     if (midi_cnt > 64)
     {
 #ifdef ESP8266
@@ -223,7 +314,6 @@ void App_UsbMidiShortMsgReceived(uint8_t *msg)
 /*
  * MIDI callbacks
  */
-
 inline void Organ_PercSetMidi(uint8_t setting, uint8_t value)
 {
     if (value > 0)
@@ -251,3 +341,4 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
 {
     Organ_SetLeslCtrl(value);
 }
+

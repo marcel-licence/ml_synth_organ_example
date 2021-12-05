@@ -46,6 +46,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+
 #ifdef ESP8266
 
 #define SWAP_SERIAL
@@ -59,7 +60,10 @@
 SoftwareSerial Serial2(RXD2, TXD2);
 #endif
 
-#else
+#endif /* ESP8266 */
+
+
+#ifdef ESP32
 
 #define LED_PIN     2
 #include "boards/board_esp32_doit.h"
@@ -74,8 +78,15 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define MIDI_RX_PIN RXD2
 
-#endif
+#endif /* ESP32 */
 
+
+#ifdef TEENSYDUINO // CORE_TEENSY
+
+#define LED_PIN 13 /* led pin on teensy 4.1 */
+#define MIDI_SERIAL1_BAUDRATE   115200
+
+#endif /* TEENSYDUINO */
 
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
