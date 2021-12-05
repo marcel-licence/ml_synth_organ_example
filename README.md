@@ -6,5 +6,8 @@
 </p>
 
 The required library can be found here: https://github.com/marcel-licence/ML_SynthTools
-more information available in future
 
+Demo using the XIAO: https://youtu.be/2wT8nByoUNw
+Demo using the Teensy4.1: https://youtu.be/H-NDCQnSDV0
+
+more information available in future
