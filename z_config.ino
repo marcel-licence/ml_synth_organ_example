@@ -129,8 +129,13 @@ struct midiControllerMapping edirolMapping[] =
 struct midiMapping_s midiMapping =
 {
     NULL,
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_NoteOn,
+    OrganPro_NoteOff,
+#else
     Organ_NoteOn,
     Organ_NoteOff,
+#endif
     NULL,
     Organ_ModulationWheel,
     edirolMapping,

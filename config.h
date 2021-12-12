@@ -47,6 +47,8 @@
 #define CONFIG_H_
 
 
+#define USE_ML_SYNTH_PRO /* using the pro library (demo version) */
+
 #ifdef ESP8266
 
 #define SWAP_SERIAL
@@ -64,6 +66,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 
 #ifdef ESP32
+
+#define SAMPLE_BUFFER_SIZE  48
 
 #define LED_PIN     2
 #include "boards/board_esp32_doit.h"
@@ -91,6 +95,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
 #define MIDI_BAUDRATE   115200
+
+#define CYCLE_MODULE_ENABLED /* show cpu load by used clock cycles */
 
 
 #endif /* CONFIG_H_ */
