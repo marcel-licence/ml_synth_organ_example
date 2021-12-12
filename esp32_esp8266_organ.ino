@@ -71,6 +71,10 @@
 #include <SerialFlash.h>
 #endif
 
+#ifdef ARDUINO_DAISY_SEED
+#include "DaisyDuino.h"
+#endif
+
 void setup()
 {
     // put your setup code here, to run once:
@@ -105,6 +109,10 @@ void setup()
 #else
     pinMode(LED_PIN, OUTPUT);
     setup_Serial2();
+#endif
+
+#ifdef ARDUINO_DAISY_SEED
+    DaisySeed_Setup();
 #endif
 
 #if 0 //ndef ESP8266
@@ -314,7 +322,7 @@ void loop()
             {
 #ifdef USE_ML_SYNTH_PRO
                 float mono[AUDIO_BLOCK_SAMPLES], left[AUDIO_BLOCK_SAMPLES], right[AUDIO_BLOCK_SAMPLES];
-                Organ_Process_fl(mono, AUDIO_BLOCK_SAMPLES);
+                OrganPro_Process_fl(mono, AUDIO_BLOCK_SAMPLES);
                 Rotary_Process(left, right, mono, AUDIO_BLOCK_SAMPLES);
                 for (size_t i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
                 {
@@ -346,8 +354,8 @@ void loop()
     }
 #endif /* TEENSYDUINO */
 
-#ifdef TEENSYDUINO
-    midi_cnt += AUDIO_BLOCK_SAMPLES;
+#ifdef SAMPLE_BUFFER_SIZE
+    midi_cnt += SAMPLE_BUFFER_SIZE;
 #else
     midi_cnt++;
 #endif

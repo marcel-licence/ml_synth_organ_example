@@ -89,12 +89,18 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define LED_PIN 13 /* led pin on teensy 4.1 */
 #define MIDI_SERIAL1_BAUDRATE   115200
+#define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
 
 #endif /* TEENSYDUINO */
 
+#ifdef ARDUINO_DAISY_SEED
+#define LED_PIN LED_BUILTIN
+#define SAMPLE_BUFFER_SIZE  48
+#endif
+
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
-#define MIDI_BAUDRATE   115200
+#define MIDI_BAUDRATE   31250
 
 #define CYCLE_MODULE_ENABLED /* show cpu load by used clock cycles */
 

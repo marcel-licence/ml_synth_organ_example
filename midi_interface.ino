@@ -64,6 +64,10 @@
 /* use define to dump midi data */
 //#define MIDI_DUMP_SERIAL2_TO_SERIAL
 
+#ifdef ARDUINO_DAISY_SEED
+HardwareSerial Serial2(USART1);
+#endif
+
 /*
  * structure is used to build the mapping table
  */
