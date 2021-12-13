@@ -152,7 +152,13 @@ void setup()
     esp_wifi_deinit();
 #endif
 
-
+#ifdef ESP32_AUDIO_KIT
+#ifdef ES8388_ENABLED
+    ES8388_Setup();
+#else
+    ac101_setup();
+#endif
+#endif
 
 #if (defined ESP8266) || (defined ESP32)
 #ifdef I2S_NODAC
