@@ -234,7 +234,13 @@ bool i2s_write_stereo_samples_buff(float *fl_sample, float *fr_sample, const int
 
     static size_t bytes_written = 0;
 
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCountPre();
+#endif
     i2s_write(i2s_port_number, (const char *)&sampleDataU[0].sample, 4 * buffLen, &bytes_written, portMAX_DELAY);
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCount();
+#endif
 
     if (bytes_written > 0)
     {

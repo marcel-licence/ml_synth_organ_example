@@ -60,10 +60,14 @@
 SoftwareSerial Serial2(RXD2, TXD2);
 #endif
 
+#define SAMPLE_RATE 44100
+
 #endif /* ESP8266 */
 
 
 #ifdef ESP32
+
+#define SAMPLE_BUFFER_SIZE  48
 
 #define LED_PIN     2
 #include "boards/board_esp32_doit.h"
@@ -85,12 +89,20 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define LED_PIN 13 /* led pin on teensy 4.1 */
 #define MIDI_SERIAL1_BAUDRATE   115200
+#define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
+#define SAMPLE_RATE AUDIO_SAMPLE_RATE
 
 #endif /* TEENSYDUINO */
 
+#ifdef ARDUINO_DAISY_SEED
+#define LED_PIN LED_BUILTIN
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE 48000
+#endif
+
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
-#define MIDI_BAUDRATE   115200
+#define MIDI_BAUDRATE   31250
 
 
 #endif /* CONFIG_H_ */

@@ -49,8 +49,11 @@
 /*
  * Library can be found on https://github.com/marcel-licence/ML_SynthTools
  */
+#ifdef USE_ML_SYNTH_PRO
+#include <ml_organ_pro.h>
+#else
 #include <ml_organ.h>
-
+#endif
 
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
@@ -68,8 +71,45 @@
 #include <SerialFlash.h>
 #endif
 
+#ifdef ARDUINO_DAISY_SEED
+#include "DaisyDuino.h"
+#endif
+
+void blink(uint8_t cnt)
+{
+    delay(500);
+    for (int i = 0; i < cnt; i++)
+    {
+
+        digitalWrite(LED_PIN, HIGH);
+        delay(50);
+        digitalWrite(LED_PIN, LOW);
+        delay(200);
+    }
+}
+
+void blink_slow(uint8_t cnt)
+{
+    delay(500);
+    for (int i = 0; i < cnt; i++)
+    {
+
+        digitalWrite(LED_PIN, HIGH);
+        delay(200);
+        digitalWrite(LED_PIN, LOW);
+        delay(100);
+    }
+}
+
 void setup()
 {
+    pinMode(LED_PIN, OUTPUT);
+    blink(1);
+
+#ifdef ARDUINO_DAISY_SEED
+    DaisySeed_Setup();
+#endif
+
     // put your setup code here, to run once:
     delay(500);
 
@@ -83,12 +123,16 @@ void setup()
 
     Serial.println();
 
+
     Serial.printf("Loading data\n");
 
     Serial.printf("Firmware started successfully\n");
 
-    Organ_Setup();
-
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_Setup(&Serial);
+#else
+    Organ_Setup(&Serial);
+#endif
 
 #if (defined ESP8266) || (defined ESP32)
     WiFi.mode(WIFI_OFF);
@@ -100,6 +144,8 @@ void setup()
     pinMode(LED_PIN, OUTPUT);
     setup_Serial2();
 #endif
+
+
 
 #if 0 //ndef ESP8266
     btStop();
@@ -119,8 +165,18 @@ void setup()
     pinMode(15, INPUT);
 #endif
 
-#if 0 /* set this to one to test the audio output with a noteOn event on startup */
+#ifdef LED_PIN
+    pinMode(LED_PIN, OUTPUT);
+#endif
+
+#if 1 /* set this to one to test the audio output with a noteOn event on startup */
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_NoteOn(0, 60, 127);
+    OrganPro_SetLeslCtrl(17);
+#else
     Organ_NoteOn(0, 60, 127);
+    Organ_SetLeslCtrl(17);
+#endif
 #endif
 
 #ifdef MIDI_VIA_USB_ENABLED
@@ -133,13 +189,36 @@ void setup()
 
 const int ledPin = LED_PIN; /* pin configured in config.h */
 
+#if 1
 AudioPlayQueue           queue1;
 AudioPlayQueue           queue2;
 AudioOutputI2S           i2s1;
 AudioConnection          patchCord1(queue1, 0, i2s1, 0); /* left channel */
 AudioConnection          patchCord2(queue2, 0, i2s1, 1); /* right channel */
+#else
+
+// GUItool: begin automatically generated code
+AudioInputUSB            usb1;           //xy=134,545
+AudioPlayQueue           queue1;         //xy=258,380
+AudioPlayQueue           queue2;         //xy=261,423
+AudioRecordQueue         queue6;         //xy=265,557
+AudioRecordQueue         queue5;         //xy=274,516
+AudioPlayQueue           queue4;         //xy=352,622
+AudioPlayQueue           queue3;         //xy=380,530
+AudioOutputI2S           i2s1;           //xy=470,393
+AudioOutputUSB           usb2;           //xy=494,544
+AudioConnection          patchCord1(usb1, 0, queue5, 0);
+AudioConnection          patchCord2(usb1, 1, queue6, 0);
+AudioConnection          patchCord3(queue1, 0, i2s1, 0);
+AudioConnection          patchCord4(queue2, 0, i2s1, 1);
+AudioConnection          patchCord5(queue3, 0, usb2, 0);
+AudioConnection          patchCord6(queue4, 0, usb2, 1);
+// GUItool: end automatically generated code
+#endif
+
 
 static int16_t   sampleBuffer[AUDIO_BLOCK_SAMPLES];
+static int16_t   sampleBuffer2[AUDIO_BLOCK_SAMPLES];
 static int16_t   *queueTransmitBuffer;
 static int16_t   *queueTransmitBuffer2;
 
@@ -151,6 +230,40 @@ void Teensy_Setup()
 }
 
 #endif /* TEENSYDUINO */
+
+#ifdef ARDUINO_DAISY_SEED
+
+DaisyHardware hw;
+size_t num_channels;
+
+volatile bool dataReady = false;
+float out_temp[2][48];
+float *outCh[2] = {out_temp[0], out_temp[1]};
+
+void MyCallback(float **in, float **out, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+
+        out[0][i] = out_temp[0][i];
+        out[1][i] = out_temp[1][i];
+        out_temp[0][i] = in[0][i];
+        out_temp[1][i] = in[1][i];
+    }
+    dataReady = true;
+}
+
+void DaisySeed_Setup()
+{
+    float sample_rate;
+    // Initialize for Daisy pod at 48kHz
+    hw = DAISY.init(DAISY_SEED, AUDIO_SR_48K);
+    num_channels = hw.num_channels;
+    sample_rate = DAISY.get_samplerate();
+
+    DAISY.begin(MyCallback);
+}
+#endif
 
 #ifdef ESP32
 /*
@@ -202,7 +315,7 @@ void Core0Task(void *parameter)
 #endif
 
 
-void loop_2Hz()
+void loop_1Hz()
 {
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));   // turn the LED on (HIGH is the voltage level)
 #ifdef CYCLE_MODULE_ENABLED
@@ -221,13 +334,13 @@ void loop()
     /*
      * generates a signal of 44100/256 -> ~172 Hz. If lower than we have buffer underruns -> audio drop outs
      */
-    if (led_cnt >= 22050)
+    if (led_cnt >= SAMPLE_RATE)
     {
-        led_cnt = 0;
-        loop_2Hz();
+        led_cnt -= SAMPLE_RATE;
+        loop_1Hz();
     }
-#ifdef TEENSYDUINO
-    led_cnt += AUDIO_BLOCK_SAMPLES;
+#ifdef SAMPLE_BUFFER_SIZE
+    led_cnt += SAMPLE_BUFFER_SIZE;
 #else
     led_cnt++;
 #endif
@@ -244,12 +357,20 @@ void loop()
 #endif /* ESP8266 */
 
 #ifdef ESP32
+#ifdef USE_ML_SYNTH_PRO
+    led_cnt--;
+    led_cnt += SAMPLE_BUFFER_SIZE;
+    float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
+    OrganPro_Process_fl(mono, SAMPLE_BUFFER_SIZE);
+    Rotary_Process(left, right, mono, SAMPLE_BUFFER_SIZE);
+    i2s_write_stereo_samples_buff(left, right, SAMPLE_BUFFER_SIZE);
+#else
     int16_t sig = Organ_Process();
     //static int16_t sig = 0;
     //sig += 1024;
 
     i2s_write_stereo_samples_i16(&sig, &sig);
-
+#endif
 #endif /* ESP32 */
 
 #ifdef TEENSYDUINO
@@ -265,6 +386,19 @@ void loop()
         if (queueTransmitBuffer)
         {
             {
+#ifdef USE_ML_SYNTH_PRO
+                float mono[AUDIO_BLOCK_SAMPLES], left[AUDIO_BLOCK_SAMPLES], right[AUDIO_BLOCK_SAMPLES];
+                OrganPro_Process_fl(mono, AUDIO_BLOCK_SAMPLES);
+                Rotary_Process(left, right, mono, AUDIO_BLOCK_SAMPLES);
+                for (size_t i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
+                {
+                    sampleBuffer[i] = (int16_t)(left[i] * INT16_MAX);
+                    sampleBuffer2[i] = (int16_t)(right[i] * INT16_MAX);
+                }
+
+                memcpy(queueTransmitBuffer, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+                memcpy(queueTransmitBuffer2, sampleBuffer2, AUDIO_BLOCK_SAMPLES * 2);
+#else
                 int32_t u32buf[AUDIO_BLOCK_SAMPLES];
 
                 Organ_Process_Buf(u32buf, AUDIO_BLOCK_SAMPLES);
@@ -273,10 +407,12 @@ void loop()
                 {
                     sampleBuffer[i] = (int16_t)((u32buf[i]));
                 }
-            }
 
-            memcpy(queueTransmitBuffer, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
-            memcpy(queueTransmitBuffer2, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+                memcpy(queueTransmitBuffer, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+                memcpy(queueTransmitBuffer2, sampleBuffer, AUDIO_BLOCK_SAMPLES * 2);
+#endif
+
+            }
 
             queue1.playBuffer();
             queue2.playBuffer();
@@ -284,8 +420,50 @@ void loop()
     }
 #endif /* TEENSYDUINO */
 
-#ifdef TEENSYDUINO
-    midi_cnt += AUDIO_BLOCK_SAMPLES;
+#ifdef ARDUINO_DAISY_SEED
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCountPre();
+#endif
+    while (!dataReady)
+    {
+        /* just do nothing */
+    }
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCount();
+#endif
+#ifdef USE_ML_SYNTH_PRO
+    float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
+    OrganPro_Process_fl(mono, SAMPLE_BUFFER_SIZE);
+    Rotary_Process(left, right, mono, SAMPLE_BUFFER_SIZE);
+#if 0
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        left[i] = i * (1.0f / ((float)SAMPLE_BUFFER_SIZE));
+        right[i] = i * (1.0f / ((float)SAMPLE_BUFFER_SIZE));
+    }
+#endif
+    memcpy(out_temp[0], left, sizeof(out_temp[0]));
+    memcpy(out_temp[1], right, sizeof(out_temp[1]));
+#else
+    int32_t u32buf[SAMPLE_BUFFER_SIZE];
+    float sig_f[SAMPLE_BUFFER_SIZE];
+
+    Organ_Process_Buf(u32buf, SAMPLE_BUFFER_SIZE);
+
+    for (size_t i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        sig_f[i] = ((float)u32buf[i]) * (1.0f / ((float)INT16_MAX));
+    }
+
+    memcpy(out_temp[0], sig_f, sizeof(out_temp[0]));
+    memcpy(out_temp[1], sig_f, sizeof(out_temp[1]));
+#endif
+
+    dataReady = false;
+#endif
+
+#ifdef SAMPLE_BUFFER_SIZE
+    midi_cnt += SAMPLE_BUFFER_SIZE;
 #else
     midi_cnt++;
 #endif
@@ -318,27 +496,47 @@ inline void Organ_PercSetMidi(uint8_t setting, uint8_t value)
 {
     if (value > 0)
     {
+#ifdef USE_ML_SYNTH_PRO
+        OrganPro_PercussionSet(setting);
+#else
         Organ_PercussionSet(setting);
+#endif
     }
 }
 
 inline void Organ_SetDrawbarInv(uint8_t id, uint8_t value)
 {
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_SetDrawbar(id, value);
+#else
     Organ_SetDrawbar(id, value);
+#endif
 }
 
 inline void Organ_SetCtrl(uint8_t unused __attribute__((unused)), uint8_t value)
 {
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_SetLeslCtrl(value);
+#else
     Organ_SetLeslCtrl(value);
+#endif
 }
 
 inline void Organ_SetLeslieSpeedNorm(uint8_t unused __attribute__((unused)), uint8_t speed)
 {
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_SetLeslCtrl(speed);
+#else
     Organ_SetLeslCtrl(speed);
+#endif
 }
 
 inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_t value)
 {
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_SetLeslCtrl(value);
+#else
     Organ_SetLeslCtrl(value);
+#endif
 }
 
