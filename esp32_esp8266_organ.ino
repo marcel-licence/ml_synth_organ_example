@@ -141,10 +141,19 @@ void setup()
 #ifdef TEENSYDUINO
     Teensy_Setup();
 #else
+
+#ifdef ARDUINO_SEEED_XIAO_M0
+    pinMode(7, INPUT_PULLUP);
+    pinMode(DAC0, OUTPUT);
+    Midi_Setup();
+    SAMD21_Synth_Init();
+    pinMode(LED_BUILTIN, OUTPUT);
+#else
     pinMode(LED_PIN, OUTPUT);
     setup_Serial2();
 #endif
 
+#endif
 
 
 #if 0 //ndef ESP8266
@@ -320,6 +329,21 @@ void Core0Task(void *parameter)
 }
 #endif
 
+#ifdef ARDUINO_SEEED_XIAO_M0
+
+static int32_t u32buf[SAMPLE_BUFFER_SIZE];
+
+inline
+void ProcessAudio(uint16_t *buff, size_t len)
+{
+    /* convert from u16 to u10 */
+    for (size_t i = 0; i < len; i++)
+    {
+        buff[i] = (uint16_t)(0x200 + (u32buf[i] / 512));
+    }
+}
+
+#endif
 
 void loop_1Hz()
 {
@@ -468,6 +492,20 @@ void loop()
     dataReady = false;
 #endif
 
+#ifdef ARDUINO_SEEED_XIAO_M0
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCountPre();
+#endif
+    while (!SAMD21_Synth_Process(ProcessAudio))
+    {
+        /* just do nothing */
+    }
+#ifdef CYCLE_MODULE_ENABLED
+    calcCycleCount();
+#endif
+    Organ_Process_Buf(u32buf, SAMPLE_BUFFER_SIZE);
+#endif
+
 #ifdef SAMPLE_BUFFER_SIZE
     midi_cnt += SAMPLE_BUFFER_SIZE;
 #else
@@ -475,11 +513,7 @@ void loop()
 #endif
     if (midi_cnt > 64)
     {
-#ifdef ESP8266
-        Midi_CheckSerial2();
-#else
         Midi_Process();
-#endif
 #ifdef MIDI_VIA_USB_ENABLED
         UsbMidi_ProcessSync();
 #endif
@@ -545,4 +579,11 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
     Organ_SetLeslCtrl(value);
 #endif
 }
+
+#ifdef ARDUINO_SEEED_XIAO_M0
+void Organ_SetLeslCtrl(uint8_t unused __attribute__((unused)))
+{
+    /* not supported this is just a stub to avoid errors */
+}
+#endif
 

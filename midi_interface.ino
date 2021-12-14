@@ -235,8 +235,14 @@ void Midi_Setup()
     pinMode(MIDI_RX_PIN, INPUT_PULLUP); /* can be connected to open collector output */
 #endif
 #endif
+
+#ifdef ARDUINO_SEEED_XIAO_M0
+    pinMode(PIN_SERIAL1_RX, INPUT_PULLUP);
+    Serial1.begin(MIDI_BAUDRATE);
+#endif
 }
 
+#ifndef ARDUINO_SEEED_XIAO_M0
 void setup_Serial2()
 {
 #if 1
@@ -257,7 +263,9 @@ void setup_Serial2()
 #endif
 #endif
 }
+#endif
 
+#ifndef ARDUINO_SEEED_XIAO_M0
 void Midi_CheckSerial2(void)
 {
     /*
@@ -329,6 +337,7 @@ void Midi_CheckSerial2(void)
         }
     }
 }
+#endif
 
 inline
 void Midi_CheckSerial(HardwareSerial *ser)
@@ -420,8 +429,15 @@ void Midi_Process()
 #ifdef ARDUINO_DAISY_SEED
     Midi_CheckSerial2();
 #endif
+#ifdef ARDUINO_SEEED_XIAO_M0
+    Midi_CheckSerial(&Serial1);
+#endif
+#ifdef ESP8266
+    Midi_CheckSerial2();
+#endif
 }
 
+#ifndef ARDUINO_SEEED_XIAO_M0
 #ifndef SWAP_SERIAL
 void Midi_SendShortMessage(uint8_t *msg)
 {
@@ -445,4 +461,5 @@ void Midi_SendRaw(uint8_t *msg)
         Serial2.write(msg, 3);
     }
 }
+#endif
 #endif

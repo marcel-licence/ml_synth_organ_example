@@ -119,9 +119,17 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_RATE 48000
 #endif
 
+#ifdef ARDUINO_SEEED_XIAO_M0
+
+#define LED_PIN LED_BUILTIN
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  22050
+
+#endif
+
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
-#define MIDI_BAUDRATE   31250
+#define MIDI_BAUDRATE   115200
 
 
 #endif /* CONFIG_H_ */
