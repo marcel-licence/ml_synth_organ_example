@@ -2,7 +2,7 @@
 <h3 align="center">MIDI Organ using the ML_SynthTools library (little example arduino project)</h3>  
 <p align="center"> 
   <img src="img/splash.jpg" alt="project picture" width="480px" height="270px"><br>
-  <a href="https://youtu.be/c7TL8jcrnzs">link to the video</a>
+  <a href="https://youtu.be/9AHQ4mQrjE8">link to the video</a>
 </p>
 
 This project is an example supporting different platforms:
