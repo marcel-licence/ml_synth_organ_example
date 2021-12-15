@@ -29,7 +29,7 @@
  */
 
 /**
- * @file esp32_esp8266_organ.ino
+ * @file ml_synth_organ_example.ino
  * @author Marcel Licence
  * @date 26.11.2021
  *
@@ -73,6 +73,10 @@
 
 #ifdef ARDUINO_DAISY_SEED
 #include "DaisyDuino.h"
+#endif
+
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+#include <I2S.h>
 #endif
 
 void blink(uint8_t cnt)
@@ -129,9 +133,9 @@ void setup()
     Serial.printf("Firmware started successfully\n");
 
 #ifdef USE_ML_SYNTH_PRO
-    OrganPro_Setup(&Serial);
+    OrganPro_Setup(&Serial, SAMPLE_RATE);
 #else
-    Organ_Setup(&Serial);
+    Organ_Setup(&Serial, SAMPLE_RATE);
 #endif
 
 #if (defined ESP8266) || (defined ESP32)
@@ -153,6 +157,14 @@ void setup()
     setup_Serial2();
 #endif
 
+#endif
+
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+    if (!I2S.begin(SAMPLE_RATE))
+    {
+        Serial.println("Failed to initialize I2S!");
+        while (1); // do nothing
+    }
 #endif
 
 
@@ -190,7 +202,8 @@ void setup()
     OrganPro_SetLeslCtrl(17);
 #else
     Organ_NoteOn(0, 60, 127);
-    Organ_SetLeslCtrl(17);
+    Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
+    Organ_SetLeslCtrl(127);
 #endif
 #endif
 
@@ -339,7 +352,8 @@ void ProcessAudio(uint16_t *buff, size_t len)
     /* convert from u16 to u10 */
     for (size_t i = 0; i < len; i++)
     {
-        buff[i] = (uint16_t)(0x200 + (u32buf[i] / 512));
+        const int32_t preDiv = 4194304; // 2 ^ (16 + 6)
+        buff[i] = (uint16_t)(0x200 + (u32buf[i] / (preDiv)));
     }
 }
 
@@ -352,7 +366,6 @@ void loop_1Hz()
     CyclePrint();
 #endif
 }
-
 
 void loop()
 {
@@ -506,6 +519,32 @@ void loop()
     Organ_Process_Buf(u32buf, SAMPLE_BUFFER_SIZE);
 #endif
 
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+    /*
+     * @see https://arduino-pico.readthedocs.io/en/latest/i2s.html
+     * @see https://www.waveshare.com/pico-audio.htm for connections
+     */
+    int32_t u32left[SAMPLE_BUFFER_SIZE];
+    int16_t u16int[2 * SAMPLE_BUFFER_SIZE];
+    Organ_Process_Buf(u32left, SAMPLE_BUFFER_SIZE);
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        u16int[2 * i] = u32left[i] ;
+        u16int[(2 * i) + 1] = u32left[i] ;
+    }
+#if 1
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE * 2; i++)
+    {
+        I2S.write(u16int[i]);
+    }
+#else
+    /* this does not work, I do not know why :-/ */
+    int16_t u16int_buf[2 * SAMPLE_BUFFER_SIZE];
+    memcpy(u16int_buf, u16int, sizeof(u16int));
+    I2S.write(u16int_buf, sizeof(u16int));
+#endif
+#endif
+
 #ifdef SAMPLE_BUFFER_SIZE
     midi_cnt += SAMPLE_BUFFER_SIZE;
 #else
@@ -579,11 +618,4 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
     Organ_SetLeslCtrl(value);
 #endif
 }
-
-#ifdef ARDUINO_SEEED_XIAO_M0
-void Organ_SetLeslCtrl(uint8_t unused __attribute__((unused)))
-{
-    /* not supported this is just a stub to avoid errors */
-}
-#endif
 
