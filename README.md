@@ -15,11 +15,11 @@ This project is an example supporting different platforms:
 
 The required library can be found here: https://github.com/marcel-licence/ML_SynthTools
 
-All platforms are tested. Actually the sound quality might by a bit limited.
+All platforms are tested. Actually the sound quality might be a bit limited.
 The organ supports full polyphony (you can play all 64 notes of the upper manual at the same time).
 You can modify the sound using 9 drawbars.
 Percussion is supported (2nd, 3rd).
-A simple rotary implementation creates a simple leslie like sound.
+A simple rotary implementation creates a simple (noisy) leslie like sound.
 
 Demo using ESP32, ESP8266: https://youtu.be/c7TL8jcrnzs
 Demo using the XIAO: https://youtu.be/2wT8nByoUNw
