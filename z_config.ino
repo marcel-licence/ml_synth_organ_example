@@ -88,8 +88,8 @@ struct midiControllerMapping edirolMapping[] =
 
     { 0x4, 0x51, "B5", NULL, Organ_PercSetMidi, 4},
     { 0x5, 0x51, "B6", NULL, Organ_PercSetMidi, 5},
-    { 0x6, 0x51, "B7", NULL, NULL, 2},
-    { 0x7, 0x51, "B8", NULL, NULL, 3},
+    { 0x6, 0x51, "B7", NULL, Organ_PercSetMidi, 6},
+    { 0x7, 0x51, "B8", NULL, Organ_PercSetMidi, 7},
 
     { 0x1, 0x53, "B9", NULL, NULL, 0},
 

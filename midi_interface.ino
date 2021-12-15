@@ -427,13 +427,16 @@ void Midi_Process()
     Midi_CheckSerial(&Serial1);
 #endif
 #ifdef ARDUINO_DAISY_SEED
-    Midi_CheckSerial2();
+    Midi_CheckSerial(&Serial2);
 #endif
 #ifdef ARDUINO_SEEED_XIAO_M0
     Midi_CheckSerial(&Serial1);
 #endif
 #ifdef ESP8266
     Midi_CheckSerial2();
+#endif
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+    Midi_CheckSerial(&Serial2);
 #endif
 }
 

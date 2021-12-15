@@ -187,7 +187,9 @@ void setup()
 #else
     setup_i2s();
 #endif
-
+    /*
+     * not sure why I have these lines here
+     */
     pinMode(2, INPUT); //restore GPIOs taken by i2s
     pinMode(15, INPUT);
 #endif
@@ -372,8 +374,6 @@ void loop()
     static int midi_cnt = 0; /*!< used to reduce MIDI processing time */
     static int led_cnt = 0; /*!< used for delay of the blinking LED */
 
-
-
     /*
      * generates a signal of 44100/256 -> ~172 Hz. If lower than we have buffer underruns -> audio drop outs
      */
@@ -408,11 +408,18 @@ void loop()
     Rotary_Process(left, right, mono, SAMPLE_BUFFER_SIZE);
     i2s_write_stereo_samples_buff(left, right, SAMPLE_BUFFER_SIZE);
 #else
-    int16_t sig = Organ_Process();
-    //static int16_t sig = 0;
-    //sig += 1024;
+    int32_t sign[SAMPLE_BUFFER_SIZE];
+    float mono[SAMPLE_BUFFER_SIZE];
+    Organ_Process_Buf(sign, SAMPLE_BUFFER_SIZE);
 
-    i2s_write_stereo_samples_i16(&sig, &sig);
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        float sigf = sign[i];
+        sigf /= INT16_MAX;
+        mono[i] = sigf;
+    }
+
+    i2s_write_stereo_samples_buff(mono, mono, SAMPLE_BUFFER_SIZE);
 #endif
 #endif /* ESP32 */
 

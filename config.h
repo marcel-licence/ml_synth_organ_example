@@ -47,6 +47,10 @@
 #define CONFIG_H_
 
 
+/*
+ * Configuration for
+ * Board: "LOLIN(WEMOS) D1 R2 & mini " or similar
+ */
 #ifdef ESP8266
 
 #define SWAP_SERIAL
@@ -64,7 +68,10 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #endif /* ESP8266 */
 
-
+/*
+ * Configuration for
+ * Board: "ESP32 Dev Module" or similar
+ */
 #ifdef ESP32
 
 //#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
@@ -103,7 +110,14 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #endif /* ESP32 */
 
-
+/*
+ * Configuration for
+ * Board: "Teensy 4.1"
+ *
+ * BCK: 21
+ * DIN: 7
+ * LCK: 20
+ */
 #ifdef TEENSYDUINO // CORE_TEENSY
 
 #define LED_PIN 13 /* led pin on teensy 4.1 */
@@ -113,12 +127,21 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #endif /* TEENSYDUINO */
 
+/*
+ * Configuration for
+ * Board: "Generic STM32H7 Series"
+ * Board part number: "Daisy Seed"
+ */
 #ifdef ARDUINO_DAISY_SEED
 #define LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE 48000
 #endif
 
+/*
+ * Configuration for
+ * Board: "Seeeduino XIAO"
+ */
 #ifdef ARDUINO_SEEED_XIAO_M0
 
 #define LED_PIN LED_BUILTIN
@@ -127,9 +150,29 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #endif
 
+/*
+ * Configuration for
+ * Board: "Rapsberry Pi Pico"
+ *
+ * BCK: 26
+ * DIN: 28
+ * LCK: 27  (always BCK + 1)
+ *
+ * MIDI_RX: 12 (GP9)
+ *
+ * Pinout @see https://www.raspberrypi-spy.co.uk/2021/01/pi-pico-pinout-and-power-pins/#prettyPhoto
+ */
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+
+#define LED_PIN LED_BUILTIN
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+#endif
+
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
-#define MIDI_BAUDRATE   115200
+#define MIDI_BAUDRATE   31250
 
 
 #endif /* CONFIG_H_ */
