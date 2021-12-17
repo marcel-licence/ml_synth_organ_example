@@ -47,14 +47,27 @@
 #define CONFIG_H_
 
 
+#ifdef __CDT_PARSER__
+#include <cdt.h>
+#endif
+
+
+#ifdef TEENSYDUINO
+#include <Audio.h> /* required to access teensy audio defines */
+#endif
+
+
+//#define USE_ML_SYNTH_PRO
+
+
 /*
  * Configuration for
- * Board: "LOLIN(WEMOS) D1 R2 & mini " or similar
+ * Board: "LOLIN(WEMOS) D1 R2 & mini 2 or similar
  */
 #ifdef ESP8266
 
 #define SWAP_SERIAL
-#define I2S_NODAC
+#define I2S_NODAC /* RX pin will be used for audio output */
 #define LED_PIN     LED_BUILTIN
 
 #define RXD2 13 /* U2RRXD, D7 */
@@ -65,6 +78,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #endif
 
 #define SAMPLE_RATE 44100
+#define SAMPLE_BUFFER_SIZE 48
 
 #endif /* ESP8266 */
 
@@ -121,7 +135,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #ifdef TEENSYDUINO // CORE_TEENSY
 
 #define LED_PIN 13 /* led pin on teensy 4.1 */
-#define MIDI_SERIAL1_BAUDRATE   115200
+#define MIDI_SERIAL1_BAUDRATE   31250
 #define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
 #define SAMPLE_RATE AUDIO_SAMPLE_RATE
 
@@ -136,6 +150,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE 48000
+
+#define MIDI_BAUDRATE   31250
 #endif
 
 /*
@@ -172,8 +188,9 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT
+#ifndef MIDI_BAUDRATE
 #define MIDI_BAUDRATE   31250
-
+#endif
 
 #endif /* CONFIG_H_ */
 
