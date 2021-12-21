@@ -34,7 +34,7 @@
  * @date 26.11.2021
  *
  * @brief   This is the main project file to test the ML_SynthLibrary (organ module)
- *          It should be compatible with ESP32 and ESP8266
+ *          It should be compatible with ESP32, ESP8266, Seedstudio XIAO, PRJC Teensy 4.1, Electrosmith Daisy Seed, Raspberry Pi Pico, STM32F4
  */
 
 
@@ -46,6 +46,8 @@
 #include "config.h"
 
 
+#include <Arduino.h>
+
 /*
  * Library can be found on https://github.com/marcel-licence/ML_SynthTools
  */
@@ -55,7 +57,9 @@
 #include <ml_organ.h>
 #endif
 
-
+#ifdef ARDUINO_GENERIC_F407VGTX
+#include <Wire.h> /* todo remove, just for scanning */
+#endif
 
 void blink(uint8_t cnt)
 {
@@ -96,7 +100,6 @@ void setup()
     DaisySeed_Setup();
 #endif
 
-    // put your setup code here, to run once:
     delay(500);
 
 #ifdef SWAP_SERIAL
@@ -338,4 +341,58 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
     Organ_SetLeslCtrl(value);
 #endif
 }
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+void  ScanI2C(void)
+{
+    Wire.setSDA(I2C_SDA);
+    Wire.setSCL(I2C_SCL);
+    Wire.begin();//I2C_SDA, I2C_SCL);
+
+    byte r_error, address;
+    int nDevices;
+
+    Serial.println("Scanning...");
+
+    nDevices = 0;
+    for (address = 1; address < 127; address++)
+    {
+        // The i2c_scanner uses the return value of
+        // the Write.endTransmisstion to see if
+        // a device did acknowledge to the address.
+        Wire.beginTransmission(address);
+        r_error = Wire.endTransmission();
+
+        if (r_error == 0)
+        {
+            Serial.print("I2C device found at address 0x");
+            if (address < 16)
+            {
+                Serial.print("0");
+            }
+            Serial.print(address, HEX);
+            Serial.println("  !");
+
+            nDevices++;
+        }
+        else if (r_error == 4)
+        {
+            Serial.print("Unknown error at address 0x");
+            if (address < 16)
+            {
+                Serial.print("0");
+            }
+            Serial.println(address, HEX);
+        }
+    }
+    if (nDevices == 0)
+    {
+        Serial.println("No I2C devices found\n");
+    }
+    else
+    {
+        Serial.println("done\n");
+    }
+}
+#endif
 

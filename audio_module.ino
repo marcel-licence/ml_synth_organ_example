@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Dieses Programm ist Freie Software: Sie können es unter den Bedingungen
+ * Dieses Programm ist Freie Software: Sie kÃ¶nnen es unter den Bedingungen
  * der GNU General Public License, wie von der Free Software Foundation,
  * Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren
- * veröffentlichten Version, weiter verteilen und/oder modifizieren.
+ * verÃ¶ffentlichten Version, weiter verteilen und/oder modifizieren.
  *
- * Dieses Programm wird in der Hoffnung bereitgestellt, dass es nützlich sein wird, jedoch
- * OHNE JEDE GEWÄHR,; sogar ohne die implizite
- * Gewähr der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
- * Siehe die GNU General Public License für weitere Einzelheiten.
+ * Dieses Programm wird in der Hoffnung bereitgestellt, dass es nÃ¼tzlich sein wird, jedoch
+ * OHNE JEDE GEWÃ„HR,; sogar ohne die implizite
+ * GewÃ¤hr der MARKTFÃ„HIGKEIT oder EIGNUNG FÃœR EINEN BESTIMMTEN ZWECK.
+ * Siehe die GNU General Public License fÃ¼r weitere Einzelheiten.
  *
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.
@@ -115,7 +115,45 @@ void Audio_Setup(void)
         while (1); // do nothing
     }
 #endif
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+    /*
+     * Todo Implementation for the STM32F407VGT6
+     * Can be found on the ST Discovery Board
+     */
+
+    /* reset the codec to allow access */
+    pinMode(DAC_RESET, OUTPUT);
+
+    digitalWrite(DAC_RESET, LOW);
+    delay(100);
+    digitalWrite(DAC_RESET, HIGH);
+    delay(200);
+
+    /* Following should list the connected codec which should be available after reset */
+    ScanI2C();
+
+    /* @see https://www.mouser.de/datasheet/2/76/CS43L22_F2-1142121.pdf */
+    Serial.printf("Dev 0x%02x: 0x01 - 0x%02x\n", 0x1A, I2C_ReadReg(0x1A, 0x01)); /* not sure what this is - gyro? */
+    Serial.printf("Dev 0x%02x: 0x01 - 0x%02x\n", 0x4A, I2C_ReadReg(0x4A, 0x01)); /* this should return Chip I.D. | Chip Revision e.g.: 0xe3 */
+
+    /*
+     * now it would be perfect to setup I2S and the line output of the DAC
+     */
+#endif
 }
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+uint8_t I2C_ReadReg(uint8_t dev, uint8_t reg)
+{
+    Wire.beginTransmission(dev);
+    Wire.write(reg); // set MCP23017 memory pointer to reg address
+    Wire.endTransmission();
+
+    Wire.requestFrom(dev, 1); // request one byte of data from MCP20317
+    return Wire.read(); // store the incoming byte into "inputs"
+}
+#endif
 
 #ifdef TEENSYDUINO
 
@@ -333,9 +371,16 @@ void Audio_OutputMono(int32_t *samples)
     I2S.write(u16int_buf, sizeof(u16int));
 #endif
 #endif /* ARDUINO_RASPBERRY_PI_PICO */
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+    /*
+     * Todo Implementation for the STM32F407VGT6
+     * Can be found on the ST Discovery Board
+     */
+#endif
 }
 
-#if (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED)
+#if (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX)
 void Audio_Output(float *left, float *right)
 {
 #ifdef ESP32
@@ -398,5 +443,13 @@ void Audio_Output(float *left, float *right)
     dataReady = false;
 
 #endif /* ARDUINO_DAISY_SEED */
-}
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+    /*
+     * Todo Implementation for the STM32F407VGT6
+     * Can be found on the ST Discovery Board
+     */
 #endif
+}
+#endif /* (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX) */
+

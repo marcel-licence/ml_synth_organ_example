@@ -93,9 +93,6 @@ SoftwareSerial Serial2(RXD2, TXD2);
 //#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
 #define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
 
-
-#define SAMPLE_BUFFER_SIZE  48
-
 #define LED_PIN     2
 /*
  * include the board configuration
@@ -147,12 +144,14 @@ SoftwareSerial Serial2(RXD2, TXD2);
  * Board part number: "Daisy Seed"
  */
 #ifdef ARDUINO_DAISY_SEED
+
 #define LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE 48000
 
 #define MIDI_BAUDRATE   31250
-#endif
+
+#endif /* ARDUINO_DAISY_SEED */
 
 /*
  * Configuration for
@@ -164,7 +163,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  22050
 
-#endif
+#endif /* ARDUINO_SEEED_XIAO_M0 */
 
 /*
  * Configuration for
@@ -184,7 +183,17 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  44100
 
-#endif
+#endif /* ARDUINO_RASPBERRY_PI_PICO */
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+
+#include "boards/board_stm32f407g-disc1.h"
+
+#define LED_PIN LED_USER_RED
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+#endif /* ARDUINO_GENERIC_F407VGTX */
 
 #define MIDI_IN RXD2
 #define MIDI_FMT_INT

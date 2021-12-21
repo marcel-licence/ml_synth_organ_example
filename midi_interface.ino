@@ -68,6 +68,10 @@
 HardwareSerial Serial2(USART1);
 #endif
 
+#ifdef ARDUINO_GENERIC_F407VGTX
+HardwareSerial Serial2(USART1);
+#endif
+
 /*
  * structure is used to build the mapping table
  */
