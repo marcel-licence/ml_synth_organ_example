@@ -69,7 +69,7 @@ HardwareSerial Serial2(USART1);
 #endif
 
 #ifdef ARDUINO_GENERIC_F407VGTX
-HardwareSerial Serial2(USART1);
+HardwareSerial Serial2(USART3); /* PB11 */
 #endif
 
 /*
@@ -243,6 +243,10 @@ void Midi_Setup()
 #ifdef ARDUINO_SEEED_XIAO_M0
     pinMode(PIN_SERIAL1_RX, INPUT_PULLUP);
     Serial1.begin(MIDI_BAUDRATE);
+#endif
+
+#ifdef ARDUINO_GENERIC_F407VGTX
+    Serial2.begin(MIDI_BAUDRATE);
 #endif
 }
 
@@ -440,6 +444,9 @@ void Midi_Process()
     Midi_CheckSerial2();
 #endif
 #ifdef ARDUINO_RASPBERRY_PI_PICO
+    Midi_CheckSerial(&Serial2);
+#endif
+#ifdef ARDUINO_GENERIC_F407VGTX
     Midi_CheckSerial(&Serial2);
 #endif
 }

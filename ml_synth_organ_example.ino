@@ -66,7 +66,6 @@ void blink(uint8_t cnt)
     delay(500);
     for (int i = 0; i < cnt; i++)
     {
-
         digitalWrite(LED_PIN, HIGH);
         delay(50);
         digitalWrite(LED_PIN, LOW);
@@ -228,10 +227,21 @@ void Core0Task(void *parameter)
 }
 #endif
 
-
+volatile uint8_t irq = 0; /* remember if irq was triggered */
 
 void loop_1Hz()
 {
+    if (irq != 0)
+    {
+        /* show information that irq was executed */
+        Serial.printf("irq: %d\n", irq);
+        if (irq == 9)
+        {
+            I2S_Start_Stream(); /* actually get stuck for unknown reasons */
+        }
+        irq = 0;
+    }
+
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));   // turn the LED on (HIGH is the voltage level)
 #ifdef CYCLE_MODULE_ENABLED
     CyclePrint();
