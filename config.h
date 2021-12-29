@@ -110,7 +110,12 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #elif (defined BOARD_ESP32_DOIT)
 #include "./boards/board_esp32_doit.h"
 
+#define MIDI_PORT2_ACTIVE
 #define MIDI_RX2_PIN RXD2
+
+/* you can activate the following lines to get an additional MIDI input */
+// MIDI_PORT1_ACTIVE
+// #define MIDI_RX1_PIN 13
 #endif
 
 #define SAMPLE_RATE 44100
