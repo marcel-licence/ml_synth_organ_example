@@ -68,5 +68,10 @@
 #define ADC_MUL_SIG_PIN 12
 #endif
 
+/*
+ * Pins defined by board
+ */
+#define RXD2 16
+#define TXD2 17
 
 #endif /* BOARDS_BOARD_ESP32_DOIT_H_ */

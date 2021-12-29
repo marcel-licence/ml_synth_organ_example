@@ -1,6 +1,4 @@
 /*
- * The GNU GENERAL PUBLIC LICENSE (GNU GPLv3)
- *
  * Copyright (c) 2021 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,9 +46,10 @@
 /*
  * MIDI In/Out
  */
-#define MIDI_RX_PIN 35
-#define MIDI_TX_PIN 34 /* only available on header */
+#define MIDI_RX2_PIN 35
+#define MIDI_TX2_PIN 34 /* only available on header */
 
+#define MIDI_SERIAL2_BAUDRATE 31250
 
 /*
  * I2S Audio In/Out

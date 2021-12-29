@@ -52,12 +52,12 @@
 #endif
 
 
+//#define USE_ML_SYNTH_PRO
+
+
 #ifdef TEENSYDUINO
 #include <Audio.h> /* required to access teensy audio defines */
 #endif
-
-
-//#define USE_ML_SYNTH_PRO
 
 
 /*
@@ -70,11 +70,14 @@
 #define I2S_NODAC /* RX pin will be used for audio output */
 #define LED_PIN     LED_BUILTIN
 
+#define MIDI_PORT_ACTIVE
+
+#ifndef SWAP_SERIAL
 #define RXD2 13 /* U2RRXD, D7 */
 #define TXD2 15 /* U2RRXD, D0 */
-#ifndef SWAP_SERIAL
 #include <SoftwareSerial.h>
 SoftwareSerial Serial2(RXD2, TXD2);
+#define MIDI_PORT2_ACTIVE
 #endif
 
 #define SAMPLE_RATE 44100
@@ -88,10 +91,10 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ESP32
 
-//#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
+#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
 //#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
-#define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
+//#define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
 
 #define LED_PIN     2
 /*
@@ -106,6 +109,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #include "./boards/board_audio_kit_es8388.h"
 #elif (defined BOARD_ESP32_DOIT)
 #include "./boards/board_esp32_doit.h"
+
+#define MIDI_RX2_PIN RXD2
 #endif
 
 #define SAMPLE_RATE 44100
@@ -114,10 +119,6 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 //#define MIDI_VIA_USB_ENABLED /* activate this when connected to the USB host breakout board */
 
-#define RXD2 16
-#define TXD2 17
-
-#define MIDI_RX_PIN RXD2
 
 #endif /* ESP32 */
 
@@ -132,6 +133,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #ifdef TEENSYDUINO // CORE_TEENSY
 
 #define LED_PIN 13 /* led pin on teensy 4.1 */
+#define MIDI_PORT1_ACTIVE
 #define MIDI_SERIAL1_BAUDRATE   31250
 #define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
 #define SAMPLE_RATE AUDIO_SAMPLE_RATE
@@ -149,6 +151,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE 48000
 
+#define MIDI_PORT2_ACTIVE
 #define MIDI_BAUDRATE   31250
 
 #endif /* ARDUINO_DAISY_SEED */
@@ -162,6 +165,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  22050
+
+#define MIDI_PORT1_ACTIVE
 
 #endif /* ARDUINO_SEEED_XIAO_M0 */
 
@@ -183,8 +188,17 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  44100
 
+#define MIDI_PORT2_ACTIVE
+
 #endif /* ARDUINO_RASPBERRY_PI_PICO */
 
+/*
+ * Configuration for
+ * Board: "Generic STM32F4 Series"
+ * Board part number: "Generic F407VGTx"
+ *
+ * does not work at the moment
+ */
 #ifdef ARDUINO_GENERIC_F407VGTX
 
 #include "boards/board_stm32f407g-disc1.h"
@@ -193,9 +207,11 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  44100
 
+#define MIDI_PORT2_ACTIVE
+
 #endif /* ARDUINO_GENERIC_F407VGTX */
 
-#define MIDI_IN RXD2
+
 #define MIDI_FMT_INT
 #ifndef MIDI_BAUDRATE
 #define MIDI_BAUDRATE   31250
