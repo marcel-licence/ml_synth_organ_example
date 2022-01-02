@@ -138,6 +138,8 @@ struct midiMapping_s midiMapping =
 #endif
     NULL,
     Organ_ModulationWheel,
+    NULL,
+    NULL,
     edirolMapping,
     sizeof(edirolMapping) / sizeof(edirolMapping[0]),
 };

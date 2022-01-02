@@ -64,12 +64,46 @@
 /* use define to dump midi data */
 //#define MIDI_DUMP_SERIAL2_TO_SERIAL
 
+
+#if (defined MIDI_RX_PIN) || (defined MIDI_RECV_FROM_SERIAL)
+#define MIDI_PORT_ACTIVE
+#endif
+
+#ifdef MIDI_RX1_PIN
+#define MIDI_PORT1_ACTIVE
+#endif
+
+#ifdef MIDI_RX2_PIN
+#define MIDI_PORT2_ACTIVE
+#endif
+
+struct midi_port_s
+{
+    Stream *serial; /* this can be software or hardware serial */
+    uint32_t inMsgWd ;
+    uint8_t inMsg[3];
+    uint8_t inMsgIndex ;
+};
+
 #ifdef ARDUINO_DAISY_SEED
 HardwareSerial Serial2(USART1);
 #endif
 
 #ifdef ARDUINO_GENERIC_F407VGTX
 HardwareSerial Serial2(USART3); /* PB11 */
+#endif
+
+
+#ifdef MIDI_PORT_ACTIVE
+struct midi_port_s MidiPort;
+#endif
+
+#ifdef MIDI_PORT1_ACTIVE
+struct midi_port_s MidiPort1;
+#endif
+
+#ifdef MIDI_PORT2_ACTIVE
+struct midi_port_s MidiPort2;
 #endif
 
 /*
@@ -103,6 +137,8 @@ struct midiMapping_s
     void (*pitchBend)(uint8_t ch, float bend);
     void (*modWheel)(uint8_t ch, float value);
 #endif
+    void (*rttMsg)(uint8_t msg);
+    void (*songPos)(uint16_t pos);
 
     struct midiControllerMapping *controlMapping;
     int mapSize;
@@ -186,6 +222,14 @@ inline void Midi_PitchBend(uint8_t ch, uint16_t bend)
     }
 }
 
+inline void Midi_SongPositionPointer(uint16_t pos)
+{
+    if (midiMapping.songPos != NULL)
+    {
+        midiMapping.songPos(pos);
+    }
+}
+
 /*
  * function will be called when a short message has been received over midi
  */
@@ -217,43 +261,22 @@ inline void Midi_HandleShortMsg(uint8_t *data, uint8_t cable __attribute__((unus
     case 0xe0:
         Midi_PitchBend(ch, ((((uint16_t)data[1])) + ((uint16_t)data[2] << 8)));
         break;
+    /* song position pointer */
+    case 0xf2:
+        Midi_SongPositionPointer(((((uint16_t)data[1])) + ((uint16_t)data[2] << 8)));
+        break;
     }
 }
 
-struct midi_port_s
+inline void Midi_RealTimeMessage(uint8_t msg)
 {
-    Stream *serial; /* this can be software or hardware serial */
-    uint32_t inMsgWd ;
-    uint8_t inMsg[3];
-    uint8_t inMsgIndex ;
-};
+    if (midiMapping.rttMsg != NULL)
+    {
+        midiMapping.rttMsg(msg);
+    }
+}
 
-#if (defined MIDI_RX_PIN) || (defined MIDI_RECV_FROM_SERIAL)
-#define MIDI_PORT_ACTIVE
-#endif
-
-#ifdef MIDI_RX1_PIN
-#define MIDI_PORT1_ACTIVE
-#endif
-
-#ifdef MIDI_RX2_PIN
-#define MIDI_PORT2_ACTIVE
-#endif
-
-
-#ifdef MIDI_PORT_ACTIVE
-struct midi_port_s MidiPort;
-#endif
-
-#ifdef MIDI_PORT1_ACTIVE
-struct midi_port_s MidiPort1;
-#endif
-
-#ifdef MIDI_PORT2_ACTIVE
-struct midi_port_s MidiPort2;
-#endif
-
-void Midi_PortSetup(struct midi_port_s *port)
+static void Midi_PortSetup(struct midi_port_s *port)
 {
     /* reset the watchdog variables */
     port->inMsgWd = 0;
@@ -341,14 +364,7 @@ void Midi_CheckMidiPort(struct midi_port_s *port)
         /* ignore live messages */
         if ((incomingByte & 0xF0) == 0xF0)
         {
-            if (incomingByte == 0xf8)
-            {
-                /* sync message */
-            }
-            if (incomingByte == 0xf2)
-            {
-                /* start message */
-            }
+            Midi_RealTimeMessage(incomingByte);
             return;
         }
 
