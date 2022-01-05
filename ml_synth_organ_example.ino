@@ -56,6 +56,9 @@
 #else
 #include <ml_organ.h>
 #endif
+#ifdef REVERB_ENABLED
+#include <ml_reverb.h>
+#endif
 
 #ifdef ARDUINO_GENERIC_F407VGTX
 #include <Wire.h> /* todo remove, just for scanning */
@@ -104,10 +107,10 @@ void setup()
 #ifdef SWAP_SERIAL
     /* only one hw serial use this for ESP */
     Serial.begin(115200);
+    delay(500);
 #else
     Serial.begin(115200);
 #endif
-    delay(500);
 
     Serial.println();
 
@@ -116,12 +119,11 @@ void setup()
 
     Serial.printf("Firmware started successfully\n");
 
-#ifdef USE_ML_SYNTH_PRO
-    OrganPro_Setup(&Serial, SAMPLE_RATE);
-#else
-    Organ_Setup(&Serial, SAMPLE_RATE);
-#endif
 
+
+#ifdef BLINK_LED_PIN
+    Blink_Setup();
+#endif
 
 #ifdef ESP8266
     Midi_Setup();
@@ -139,7 +141,7 @@ void setup()
     Midi_Setup();
     pinMode(LED_BUILTIN, OUTPUT);
 #else
-    pinMode(LED_PIN, OUTPUT);
+
 #ifndef ESP8266 /* otherwise it will break audio output */
     Midi_Setup();
 #endif
@@ -149,19 +151,44 @@ void setup()
 
 
 
+#ifdef USE_ML_SYNTH_PRO
+    OrganPro_Setup(&Serial, SAMPLE_RATE);
+#else
+    Organ_Setup(&Serial, SAMPLE_RATE);
+#endif
 
-
-
-
+#ifdef REVERB_ENABLED
+    /*
+     * Initialize reverb
+     * The buffer shall be static to ensure that
+     * the memory will be exclusive available for the reverb module
+     */
+    //static float revBuffer[REV_BUFF_SIZE];
+    static float *revBuffer = (float *)malloc(sizeof(float) * REV_BUFF_SIZE);
+    Reverb_Setup(revBuffer);
+#endif
 
 #ifdef LED_PIN
     pinMode(LED_PIN, OUTPUT);
 #endif
 
+#ifdef ESP32
+    Serial.printf("ESP.getFreeHeap() %d\n", ESP.getFreeHeap());
+    Serial.printf("ESP.getMinFreeHeap() %d\n", ESP.getMinFreeHeap());
+    Serial.printf("ESP.getHeapSize() %d\n", ESP.getHeapSize());
+    Serial.printf("ESP.getMaxAllocHeap() %d\n", ESP.getMaxAllocHeap());
+
+    /* PSRAM will be fully used by the looper */
+    Serial.printf("Total PSRAM: %d\n", ESP.getPsramSize());
+    Serial.printf("Free PSRAM: %d\n", ESP.getFreePsram());
+#endif
+
+    Serial.printf("Firmware started successfully\n");
+
 #if 1 /* set this to one to test the audio output with a noteOn event on startup */
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
-    OrganPro_SetLeslCtrl(17);
+    OrganPro_SetLeslCtrl(127);
 #else
     Organ_NoteOn(0, 60, 127);
     Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
@@ -227,26 +254,15 @@ void Core0Task(void *parameter)
 }
 #endif
 
-volatile uint8_t irq = 0; /* remember if irq was triggered */
+
 
 void loop_1Hz()
 {
-#ifdef ARDUINO_GENERIC_F407VGTX
-    if (irq != 0)
-    {
-        /* show information that irq was executed */
-        Serial.printf("irq: %d\n", irq);
-        if (irq == 9)
-        {
-            I2S_Start_Stream(); /* actually get stuck for unknown reasons */
-        }
-        irq = 0;
-    }
-#endif
-
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));   // turn the LED on (HIGH is the voltage level)
 #ifdef CYCLE_MODULE_ENABLED
     CyclePrint();
+#endif
+#ifdef BLINK_LED_PIN
+    Blink_Process();
 #endif
 }
 
@@ -282,12 +298,32 @@ void loop()
 #else
     float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
     OrganPro_Process_fl(mono, SAMPLE_BUFFER_SIZE);
+
+#ifdef INPUT_TO_MIX
+    Audio_Input(left, right);
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] += (left[i] * 0.5f + right[i] * 0.5f) * 32.0f;
+    }
+#endif
+
+#ifdef REVERB_ENABLED
+    Reverb_Process(mono, SAMPLE_BUFFER_SIZE);
+#endif
+
     Rotary_Process(left, right, mono, SAMPLE_BUFFER_SIZE);
+
+    /*
+     * Output the audio
+     */
     Audio_Output(left, right);
 #endif
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
+#ifdef REVERB_ENABLED
+    Reverb_Process(mono, SAMPLE_BUFFER_SIZE); /* post reverb */
+#endif
     Audio_OutputMono(mono);
 #endif
 }
@@ -351,6 +387,15 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
     OrganPro_SetLeslCtrl(value);
 #else
     Organ_SetLeslCtrl(value);
+#endif
+}
+
+inline void Reverb_SetLevelInt(uint8_t unused, uint8_t value)
+{
+    float val = value;
+    val /= 127.0f;
+#ifdef REVERB_ENABLED
+    Reverb_SetLevel(unused, val);
 #endif
 }
 

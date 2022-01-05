@@ -120,7 +120,7 @@ struct midiControllerMapping edirolMapping[] =
     { 0x6, 0x10, "R7", NULL, Organ_SetCtrl, 6},
     { 0x7, 0x10, "R8", NULL, Organ_SetCtrl, 7},
 
-    { 0x0, 0x12, "R9", NULL, Organ_SetCtrl, 8},
+    { 0x0, 0x12, "R9", NULL, Reverb_SetLevelInt, 8},
 
     /* Central slider */
     { 0x0, 0x13, "H1", NULL, Organ_SetLeslieSpeedNorm, 0},

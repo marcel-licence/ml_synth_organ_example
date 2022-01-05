@@ -288,6 +288,7 @@ void Midi_Setup()
 {
 #ifdef MIDI_RECV_FROM_SERIAL
     MidiPort.serial = &Serial;
+    Serial.printf("MIDI listen on Serial\n", MIDI_SERIAL_BAUDRATE);
 #endif /* MIDI_RECV_FROM_SERIAL */
 
 #ifdef MIDI_PORT_ACTIVE

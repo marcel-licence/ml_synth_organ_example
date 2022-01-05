@@ -91,12 +91,17 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ESP32
 
-#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
+//#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
-//#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
+#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
 //#define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
 
-#define LED_PIN     2
+#define INPUT_TO_MIX /* use this to mix the input to the organ signal */
+
+#define LED_PIN     BLINK_LED_PIN
+
+#define REVERB_ENABLED /* add simple reverb */
+
 /*
  * include the board configuration
  * there you will find the most hardware depending pin settings
@@ -121,7 +126,6 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define SAMPLE_BUFFER_SIZE  48
 
 //#define MIDI_VIA_USB_ENABLED /* activate this when connected to the USB host breakout board */
-
 
 #endif /* ESP32 */
 
