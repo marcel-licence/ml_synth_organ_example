@@ -191,8 +191,9 @@ void setup()
     OrganPro_SetLeslCtrl(127);
 #else
     Organ_NoteOn(0, 60, 127);
-    Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
     Organ_SetLeslCtrl(127);
+    Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
+    Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
 #endif
 #endif
 
@@ -322,7 +323,16 @@ void loop()
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
 #ifdef REVERB_ENABLED
-    Reverb_Process(mono, SAMPLE_BUFFER_SIZE); /* post reverb */
+    float mono_f[SAMPLE_BUFFER_SIZE];
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono_f[i] = mono[i];
+    }
+    Reverb_Process(mono_f, SAMPLE_BUFFER_SIZE); /* post reverb */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] = mono_f[i];
+    }
 #endif
     Audio_OutputMono(mono);
 #endif
