@@ -59,6 +59,10 @@
 #ifdef REVERB_ENABLED
 #include <ml_reverb.h>
 #endif
+#include <ml_delay.h>
+#ifdef OLED_OSC_DISP_ENABLED
+#include <ml_scope.h>
+#endif
 
 #ifdef ARDUINO_GENERIC_F407VGTX
 #include <Wire.h> /* todo remove, just for scanning */
@@ -168,6 +172,17 @@ void setup()
     Reverb_Setup(revBuffer);
 #endif
 
+#ifdef MAX_DELAY
+    /*
+     * Prepare a buffer which can be used for the delay
+     */
+    //static int16_t delBuffer1[MAX_DELAY];
+    //static int16_t delBuffer2[MAX_DELAY];
+    static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
+    static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
+    Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
+#endif
+
 #ifdef LED_PIN
     pinMode(LED_PIN, OUTPUT);
 #endif
@@ -197,7 +212,7 @@ void setup()
 #endif
 #endif
 
-#if (defined MIDI_VIA_USB_ENABLED)
+#if (defined MIDI_VIA_USB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
 #ifdef ESP32
     Core0TaskInit();
 #else
@@ -225,6 +240,10 @@ void Core0TaskSetup()
     /*
      * init your stuff for core0 here
      */
+
+#ifdef OLED_OSC_DISP_ENABLED
+    ScopeOled_Setup();
+#endif
 #ifdef MIDI_VIA_USB_ENABLED
     UsbMidi_Setup();
 #endif
@@ -237,6 +256,10 @@ void Core0TaskLoop()
      */
 #ifdef MIDI_VIA_USB_ENABLED
     UsbMidi_Loop();
+#endif
+
+#ifdef OLED_OSC_DISP_ENABLED
+    ScopeOled_Process();
 #endif
 }
 
@@ -314,10 +337,21 @@ void loop()
 
     Rotary_Process(left, right, mono, SAMPLE_BUFFER_SIZE);
 
+#ifdef MAX_DELAY
+    /*
+     * post process delay
+     */
+    Delay_Process_Buff2(left, right, SAMPLE_BUFFER_SIZE);
+#endif
+
     /*
      * Output the audio
      */
     Audio_Output(left, right);
+
+#ifdef OLED_OSC_DISP_ENABLED
+    ScopeOled_AddSamples(left, right, SAMPLE_BUFFER_SIZE);
+#endif
 #endif
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
@@ -406,6 +440,24 @@ inline void Reverb_SetLevelInt(uint8_t unused, uint8_t value)
     val /= 127.0f;
 #ifdef REVERB_ENABLED
     Reverb_SetLevel(unused, val);
+#endif
+}
+
+inline void Delay_SetOutputLevelInt(uint8_t unused, uint8_t value)
+{
+    float val = value;
+    val /= 127.0f;
+#ifdef REVERB_ENABLED
+    Delay_SetOutputLevel(unused, val);
+#endif
+}
+
+inline void Delay_SetFeedbackInt(uint8_t unused, uint8_t value)
+{
+    float val = value;
+    val /= 127.0f;
+#ifdef REVERB_ENABLED
+    Delay_SetFeedback(unused, val);
 #endif
 }
 
