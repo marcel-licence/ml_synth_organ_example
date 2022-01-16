@@ -64,7 +64,7 @@
 #include <ml_scope.h>
 #endif
 
-#ifdef ARDUINO_GENERIC_F407VGTX
+#if (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG)
 #include <Wire.h> /* todo remove, just for scanning */
 #endif
 
@@ -461,12 +461,16 @@ inline void Delay_SetFeedbackInt(uint8_t unused, uint8_t value)
 #endif
 }
 
-#ifdef ARDUINO_GENERIC_F407VGTX
+#if (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG)
 void  ScanI2C(void)
 {
+#ifdef ARDUINO_GENERIC_F407VGTX
     Wire.setSDA(I2C_SDA);
     Wire.setSCL(I2C_SCL);
     Wire.begin();//I2C_SDA, I2C_SCL);
+#else
+    Wire.begin();
+#endif
 
     byte r_error, address;
     int nDevices;
@@ -513,5 +517,5 @@ void  ScanI2C(void)
         Serial.println("done\n");
     }
 }
-#endif
+#endif /* (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG) */
 

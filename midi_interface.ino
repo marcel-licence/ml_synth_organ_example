@@ -89,8 +89,8 @@ struct midi_port_s
 HardwareSerial Serial2(USART1);
 #endif
 
-#ifdef ARDUINO_GENERIC_F407VGTX
-HardwareSerial Serial2(USART3); /* PB11 */
+#if (defined ARDUINO_GENERIC_F407VGTX) // || (defined ARDUINO_DISCO_F407VG)
+HardwareSerial Serial2(USART2); /* PA3 */
 #endif
 
 

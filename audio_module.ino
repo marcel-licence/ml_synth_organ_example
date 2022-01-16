@@ -122,44 +122,12 @@ void Audio_Setup(void)
     }
 #endif
 
-#ifdef ARDUINO_GENERIC_F407VGTX
-    /*
-     * Todo Implementation for the STM32F407VGT6
-     * Can be found on the ST Discovery Board
-     */
+#if (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG)
 
-    /* reset the codec to allow access */
-    pinMode(DAC_RESET, OUTPUT);
+    STM32_AudioInit();
 
-    digitalWrite(DAC_RESET, LOW);
-    delay(100);
-    digitalWrite(DAC_RESET, HIGH);
-    delay(200);
-
-    /* Following should list the connected codec which should be available after reset */
-    ScanI2C();
-
-    /* @see https://www.mouser.de/datasheet/2/76/CS43L22_F2-1142121.pdf */
-    Serial.printf("Dev 0x%02x: 0x01 - 0x%02x\n", 0x1A, I2C_ReadReg(0x1A, 0x01)); /* not sure what this is - gyro? */
-    Serial.printf("Dev 0x%02x: 0x01 - 0x%02x\n", 0x4A, I2C_ReadReg(0x4A, 0x01)); /* this should return Chip I.D. | Chip Revision e.g.: 0xe3 */
-
-    /*
-     * now it would be perfect to setup I2S and the line output of the DAC
-     */
-#endif
+#endif /* (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG) */
 }
-
-#ifdef ARDUINO_GENERIC_F407VGTX
-uint8_t I2C_ReadReg(uint8_t dev, uint8_t reg)
-{
-    Wire.beginTransmission(dev);
-    Wire.write(reg); // set MCP23017 memory pointer to reg address
-    Wire.endTransmission();
-
-    Wire.requestFrom(dev, 1); // request one byte of data from MCP20317
-    return Wire.read(); // store the incoming byte into "inputs"
-}
-#endif
 
 #ifdef TEENSYDUINO
 
@@ -383,10 +351,14 @@ void Audio_OutputMono(int32_t *samples)
      * Todo Implementation for the STM32F407VGT6
      * Can be found on the ST Discovery Board
      */
+#endif /* ARDUINO_GENERIC_F407VGTX */
+
+#ifdef ARDUINO_DISCO_F407VG
+    STM32_AudioWriteS16(samples);
 #endif
 }
 
-#if (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX)
+#if (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG)
 void Audio_Input(float *left, float *right)
 {
 #ifdef ESP32
@@ -396,6 +368,14 @@ void Audio_Input(float *left, float *right)
 
 void Audio_Output(float *left, float *right)
 {
+#ifdef OUTPUT_SAW_TEST
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        left[i] = ((float)i) / ((float)SAMPLE_BUFFER_SIZE);
+        right[i] = ((float)i) / ((float)SAMPLE_BUFFER_SIZE);
+    }
+#endif
+
 #ifdef ESP32
     i2s_write_stereo_samples_buff(left, right, SAMPLE_BUFFER_SIZE);
 #endif /* ESP32 */
@@ -452,17 +432,21 @@ void Audio_Output(float *left, float *right)
     memcpy(out_temp[0], left, sizeof(out_temp[0]));
     memcpy(out_temp[1], right, sizeof(out_temp[1]));
 
-
     dataReady = false;
 
 #endif /* ARDUINO_DAISY_SEED */
 
 #ifdef ARDUINO_GENERIC_F407VGTX
-    /*
-     * Todo Implementation for the STM32F407VGT6
-     * Can be found on the ST Discovery Board
-     */
+
+    STM32_AudioWrite(left, right);
+
+#endif /* ARDUINO_GENERIC_F407VGTX */
+
+#ifdef ARDUINO_DISCO_F407VG
+
+    STM32_AudioWrite(left, right);
+
 #endif /* ARDUINO_GENERIC_F407VGTX */
 }
-#endif /* (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX) */
+#endif /* (defined ESP32) || (defined TEENSYDUINO) || (defined ARDUINO_DAISY_SEED) || (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG) */
 

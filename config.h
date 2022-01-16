@@ -54,6 +54,8 @@
 
 //#define USE_ML_SYNTH_PRO
 
+/* use the following to test the output / codec */
+//#define OUTPUT_SAW_TEST
 
 #ifdef TEENSYDUINO
 #include <Audio.h> /* required to access teensy audio defines */
@@ -111,7 +113,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  * include the board configuration
  * there you will find the most hardware depending pin settings
  */
-#include <ml_boards.h>
+#include <ml_boards.h> /* requires the ML_Synth library:  https://github.com/marcel-licence/ML_SynthTools */
 
 #ifdef BOARD_ML_V1
 #elif (defined BOARD_ESP32_AUDIO_KIT_AC101)
@@ -213,15 +215,37 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ARDUINO_GENERIC_F407VGTX
 
-#include "boards/board_stm32f407g-disc1.h"
+#include <ml_boards.h> /* requires the ML_Synth library:  https://github.com/marcel-licence/ML_SynthTools */
 
-#define LED_PIN LED_USER_RED
+#define BLINK_LED_PIN LED_USER_RED
+#define LED_PIN LED_USER_GREEN
+
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  44100
 
 #define MIDI_PORT2_ACTIVE
 
 #endif /* ARDUINO_GENERIC_F407VGTX */
+
+
+#ifdef ARDUINO_DISCO_F407VG
+
+/*
+ * pro organ seems not to work. Maybe too slow?
+ */
+
+#include <ml_boards.h> /* requires the ML_Synth library:  https://github.com/marcel-licence/ML_SynthTools */
+
+#define BLINK_LED_PIN LED_USER_RED
+#define LED_PIN LED_USER_GREEN
+
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+//#define MIDI_PORT1_ACTIVE /* MIDI in : PIN A10  not tested*/
+#define MIDI_PORT2_ACTIVE /* MIDI in : PIN A3 */
+
+#endif /* ARDUINO_DISCO_F407VG */
 
 
 #define MIDI_FMT_INT

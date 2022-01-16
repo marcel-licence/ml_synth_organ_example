@@ -8,10 +8,13 @@
  * Author: Marcel Licence
  */
 
+
+#ifdef BLINK_LED_PIN
+
 inline
 void Blink_Setup(void)
 {
-    pinMode(LED_PIN, OUTPUT);
+    pinMode(BLINK_LED_PIN, OUTPUT);
 }
 
 
@@ -21,11 +24,13 @@ void Blink_Process(void)
     static bool ledOn = true;
     if (ledOn)
     {
-        digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+        digitalWrite(BLINK_LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
     }
     else
     {
-        digitalWrite(LED_PIN, LOW);    // turn the LED off
+        digitalWrite(BLINK_LED_PIN, LOW);    // turn the LED off
     }
     ledOn = !ledOn;
 }
+
+#endif
