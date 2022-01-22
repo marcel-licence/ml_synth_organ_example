@@ -160,7 +160,7 @@ void STM32_AudioInit()
 #endif /* SETUP_CS43L22_CODEC */
 }
 
-void STM32_AudioWriteS16(int32_t *samples)
+void STM32_AudioWriteS16(const int32_t *samples)
 {
     int16_t u16int[2 * SAMPLE_BUFFER_SIZE];
 
@@ -175,7 +175,7 @@ void STM32_AudioWriteS16(int32_t *samples)
     }
 }
 
-void STM32_AudioWrite(float *fl_sample, float *fr_sample)
+void STM32_AudioWrite(const float *fl_sample, const float *fr_sample)
 {
     for (size_t i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
