@@ -248,6 +248,68 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #endif /* ARDUINO_DISCO_F407VG */
 
 
+#ifdef ARDUINO_BLACK_F407VE
+
+#define BLINK_LED_PIN LED_BUILTIN
+#define LED_PIN LED_BUILTIN
+
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+/*
+ * define your I2S interface here!
+ * values are just example values and will not work
+ */
+#define I2S_I2SN    SPI1 // Using SPI1 for I2S
+#define I2S_MCLK    PC7 // I2S1_MCK
+#define I2S_SCLK    PC10 // I2S1_CK
+#define I2S_SDIN    PC12 // I2S1_SD mcu out -> dac in
+#define I2S_LRCK    PA4 // I2S1_WS
+
+#endif /* DARDUINO_BLACK_F407VE */
+
+
+#ifdef ARDUINO_BLUEPILL_F103C8
+
+#define BLINK_LED_PIN LED_BUILTIN
+#define LED_PIN LED_BUILTIN
+
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+/*
+ * define your I2S interface here!
+ * values are just example values and will not work
+ */
+#define I2S_I2SN    SPI1 // Using SPI1 for I2S
+#define I2S_MCLK    PB7 // I2S1_MCK
+#define I2S_SCLK    PC15 // I2S1_CK
+#define I2S_SDIN    PC9 // I2S1_SD mcu out -> dac in
+#define I2S_LRCK    PA4 // I2S1_WS
+
+#endif /* ARDUINO_BLUEPILL_F103C8 */
+
+
+#ifdef ARDUINO_BLUE_F103VE
+
+#define BLINK_LED_PIN LED_BUILTIN
+#define LED_PIN LED_BUILTIN
+
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  44100
+
+/*
+ * define your I2S interface here!
+ * values are just example values and will not work
+ */
+#define I2S_I2SN    SPI1 // Using SPI1 for I2S
+#define I2S_MCLK    PC7 // I2S1_MCK
+#define I2S_SCLK    PC10 // I2S1_CK
+#define I2S_SDIN    PC12 // I2S1_SD mcu out -> dac in
+#define I2S_LRCK    PA4 // I2S1_WS
+
+#endif /* ARDUINO_BLUE_F103VE */
+
 #define MIDI_FMT_INT
 #ifndef MIDI_BAUDRATE
 #define MIDI_BAUDRATE   31250
