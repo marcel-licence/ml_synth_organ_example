@@ -61,6 +61,10 @@ void codec_writeReg(unsigned char reg, unsigned char data)
     Wire.write(reg);
     Wire.write(data);
     error = Wire.endTransmission();
+    if (error != 0)
+    {
+        Serial.printf("Wire transmission error: %d\n", error);
+    }
 }
 
 uint8_t I2C_ReadReg(uint8_t dev, uint8_t reg)
@@ -69,7 +73,7 @@ uint8_t I2C_ReadReg(uint8_t dev, uint8_t reg)
     Wire.write(reg); // set memory pointer to reg address
     Wire.endTransmission();
 
-    Wire.requestFrom(dev, 1); // request one byte of data from codec
+    Wire.requestFrom(dev, 1U); // request one byte of data from codec
     return Wire.read(); // store the incoming byte into "inputs"
 }
 

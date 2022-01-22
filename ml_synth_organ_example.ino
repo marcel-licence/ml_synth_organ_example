@@ -434,7 +434,7 @@ inline void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_
 #endif
 }
 
-inline void Reverb_SetLevelInt(uint8_t unused, uint8_t value)
+inline void Reverb_SetLevelInt(uint8_t unused __attribute__((unused)), uint8_t value)
 {
     float val = value;
     val /= 127.0f;
@@ -443,7 +443,7 @@ inline void Reverb_SetLevelInt(uint8_t unused, uint8_t value)
 #endif
 }
 
-inline void Delay_SetOutputLevelInt(uint8_t unused, uint8_t value)
+inline void Delay_SetOutputLevelInt(uint8_t unused __attribute__((unused)), uint8_t value)
 {
     float val = value;
     val /= 127.0f;
@@ -452,7 +452,7 @@ inline void Delay_SetOutputLevelInt(uint8_t unused, uint8_t value)
 #endif
 }
 
-inline void Delay_SetFeedbackInt(uint8_t unused, uint8_t value)
+inline void Delay_SetFeedbackInt(uint8_t unused __attribute__((unused)), uint8_t value)
 {
     float val = value;
     val /= 127.0f;

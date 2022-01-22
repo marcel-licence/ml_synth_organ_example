@@ -438,16 +438,15 @@ void Midi_Process()
 
 #ifndef ARDUINO_SEEED_XIAO_M0
 #ifndef SWAP_SERIAL
+#ifdef MIDI_TX2_PIN
 void Midi_SendShortMessage(uint8_t *msg)
 {
-#ifdef MIDI_TX2_PIN
     MidiPort2.serial->write(msg, 3);
-#endif
 }
 
 void Midi_SendRaw(uint8_t *msg)
 {
-#ifdef MIDI_TX2_PIN
+
     /* sysex */
     if (msg[0] == 0xF0)
     {
@@ -462,8 +461,8 @@ void Midi_SendRaw(uint8_t *msg)
     {
         MidiPort2.serial->write(msg, 3);
     }
-#endif
 }
+#endif /* MIDI_TX2_PIN */
 #endif
 #endif
 
