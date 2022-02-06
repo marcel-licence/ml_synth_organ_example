@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Marcel Licence
+ * Copyright (c) 2022 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
  */
 
 /**
-* @file stm32_audio.ino
-* @author Marcel Licence
-* @date 21.12.2021
-*
-* @brief  This file provides an implementation to get the sound running on the stm32 discovery board
-*/
+ * @file stm32_audio.ino
+ * @author Marcel Licence
+ * @date 21.12.2021
+ *
+ * @brief  This file provides an implementation to get the sound running on the stm32 discovery board
+ */
 
 
 #ifdef __CDT_PARSER__

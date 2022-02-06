@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Marcel Licence
+ * Copyright (c) 2022 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +200,7 @@ void setup()
 
     Serial.printf("Firmware started successfully\n");
 
-#if 1 /* set this to one to test the audio output with a noteOn event on startup */
+#ifdef NOTE_ON_AFTER_SETUP
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
     OrganPro_SetLeslCtrl(127);

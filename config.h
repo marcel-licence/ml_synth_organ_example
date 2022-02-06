@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Marcel Licence
+ * Copyright (c) 2022 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,12 @@
 #endif
 
 
+#define NOTE_ON_AFTER_SETUP /* used to get a test tone without MIDI input. Can be deactivated */
+
 //#define USE_ML_SYNTH_PRO
+
+//#define AUDIO_PASS_THROUGH
+
 
 /* use the following to test the output / codec */
 //#define OUTPUT_SAW_TEST
@@ -249,8 +254,21 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 
 #ifdef ARDUINO_BLACK_F407VE
-
-#define BLINK_LED_PIN LED_BUILTIN
+/*
+ * from variant.h
+ * LED_BUILTIN: PA6
+ * LED1_BUILTIN: PA7
+ *
+ * USER_BUTTON0: PA0
+ * USER_BUTTON1: PE3
+ * USER_BUTTON2: PE4
+ *
+ * SDA: PB7
+ * SCL: PB6
+ *
+ * @see http://wiki.stm32duino.com/images/5/5c/STM32_F4VE_SCHEMATIC.PDF
+ */
+#define BLINK_LED_PIN LED_BUILTIN /* PA6 */
 #define LED_PIN LED_BUILTIN
 
 #define SAMPLE_BUFFER_SIZE  48
