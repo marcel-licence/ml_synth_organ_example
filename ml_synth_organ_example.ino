@@ -378,7 +378,9 @@ void loop()
 #ifdef MIDI_VIA_USB_ENABLED
 void App_UsbMidiShortMsgReceived(uint8_t *msg)
 {
+#ifdef MIDI_TX2_PIN
     Midi_SendShortMessage(msg);
+#endif
     Midi_HandleShortMsg(msg, 8);
 }
 #endif
