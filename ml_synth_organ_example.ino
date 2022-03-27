@@ -53,6 +53,7 @@
  */
 #ifdef USE_ML_SYNTH_PRO
 #include <ml_organ_pro.h>
+#include <ml_system.h>
 #else
 #include <ml_organ.h>
 #endif
@@ -120,6 +121,15 @@ void setup()
 
 
     Serial.printf("Loading data\n");
+
+
+#ifdef ESP32
+#ifdef USE_ML_SYNTH_PRO
+    char user[] = "";
+    System_PrintInfo(user);
+#endif
+#endif
+
 
     Serial.printf("Firmware started successfully\n");
 
@@ -276,7 +286,7 @@ void Core0Task(void *parameter)
         yield();
     }
 }
-#endif
+#endif /* ESP32 */
 
 
 
