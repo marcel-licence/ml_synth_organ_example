@@ -53,7 +53,6 @@
  */
 #ifdef USE_ML_SYNTH_PRO
 #include <ml_organ_pro.h>
-#include <ml_system.h>
 #else
 #include <ml_organ.h>
 #endif
@@ -222,6 +221,13 @@ void setup()
 #endif
 #endif
 
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    MidiStreamPlayer_Init();
+
+    char midiFile[] = "/song.mid";
+    MidiStreamPlayer_PlayMidiFile_fromLittleFS(midiFile, 1);
+#endif
+
 #if (defined MIDI_VIA_USB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
 #ifdef ESP32
     Core0TaskInit();
@@ -321,6 +327,9 @@ void loop()
     Midi_Process();
 #ifdef MIDI_VIA_USB_ENABLED
     UsbMidi_ProcessSync();
+#endif
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    MidiStreamPlayer_Tick(SAMPLE_BUFFER_SIZE);
 #endif
 
     /*
