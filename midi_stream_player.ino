@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Dieses Programm ist Freie Software: Sie können es unter den Bedingungen
+ * Dieses Programm ist Freie Software: Sie kÃ¶nnen es unter den Bedingungen
  * der GNU General Public License, wie von der Free Software Foundation,
  * Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren
- * veröffentlichten Version, weiter verteilen und/oder modifizieren.
+ * verÃ¶ffentlichten Version, weiter verteilen und/oder modifizieren.
  *
- * Dieses Programm wird in der Hoffnung bereitgestellt, dass es nützlich sein wird, jedoch
- * OHNE JEDE GEWÄHR,; sogar ohne die implizite
- * Gewähr der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
- * Siehe die GNU General Public License für weitere Einzelheiten.
+ * Dieses Programm wird in der Hoffnung bereitgestellt, dass es nÃ¼tzlich sein wird, jedoch
+ * OHNE JEDE GEWÃ„HR,; sogar ohne die implizite
+ * GewÃ¤hr der MARKTFÃ„HIGKEIT oder EIGNUNG FÃœR EINEN BESTIMMTEN ZWECK.
+ * Siehe die GNU General Public License fÃ¼r weitere Einzelheiten.
  *
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.
@@ -31,7 +31,7 @@
 /**
  * @file midi_stream_player.ino
  * @author Marcel Licence
- * @date 22.05.2021
+ * @date 22.05.2022
  *
  * @brief This file contains code to access the midi file stream player
  *
@@ -46,7 +46,7 @@
 #endif
 
 
-#ifdef MIDI_STEAM_PLAYER_ENABLED
+#ifdef MIDI_STREAM_PLAYER_ENABLED
 
 
 #ifdef ARDUINO_DAISY_SEED
@@ -70,10 +70,15 @@ extern SdFatFs fatFs;
 
 
 #include <FS.h>
-#include <LITTLEFS.h>
+#ifdef ARDUINO_RUNNING_CORE /* tested with arduino esp32 core version 2.0.2 */
+#include <LittleFS.h> /* Using library LittleFS at version 2.0.0 from https://github.com/espressif/arduino-esp32 */
+#else
+#include <LITTLEFS.h> /* Using library LittleFS_esp32 at version 1.0.6 from https://github.com/lorol/LITTLEFS */
+#define LittleFS LITTLEFS
+#endif
 #include <SD_MMC.h>
 
-#include "ml_midi_file_stream.h"
+#include <ml_midi_file_stream.h>
 
 
 static void listDir(FST &fs, const char *dirname, uint8_t levels);
@@ -96,12 +101,12 @@ fs::File midiFile;
 
 uint8_t MIDI_open(const char *path, const char *mode)
 {
-    if (!LITTLEFS.begin(FORMAT_LITTLEFS_IF_FAILED))
+    if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED))
     {
         Serial.println("LITTLEFS Mount Failed");
         return 0;
     }
-    midiFile = LITTLEFS.open(path);
+    midiFile = LittleFS.open(path);
     if (!midiFile)
     {
         Serial.println("- failed to open file");
@@ -183,7 +188,7 @@ void MidiStreamPlayer_Init()
 
 void MidiStreamPlayer_PlayFile(char *midi_filename)
 {
-    MidiStreamPlayer_PlayMidiFile_fromLittleFS(midi_filename, NULL);
+    MidiStreamPlayer_PlayMidiFile_fromLittleFS(midi_filename, 0);
 }
 
 static void listDir(FST &fs, const char *dirname, uint8_t levels)
@@ -230,14 +235,14 @@ static bool midiPlaying = false;
 void MidiDataCallback(uint8_t *data, uint8_t data_len)
 {
     printf("d:");
-    for (uint8_t n; n < data_len; n++)
+    for (uint8_t n = 0; n < data_len; n++)
     {
         printf(" %02x", data[n]);
     }
     printf("\n");
 }
 
-long duration = 0;
+uint64_t duration = 0;
 struct midi_proc_s midi;
 
 void MidiStreamPlayer_NoteOn(uint8_t ch, uint8_t note, uint8_t vel)
@@ -257,35 +262,65 @@ void MidiStreamPlayer_ControlChange(uint8_t ch, uint8_t number, uint8_t value)
 
 void MidiStreamPlayer_PlayMidiFile_fromLittleFS(char *filename, uint8_t trackToPlay)
 {
+    Serial.printf("Try to open %s from LittleFS\n", filename);
+
     midi.raw = MidiDataCallback;
     midi.noteOn = MidiStreamPlayer_NoteOn;
     midi.noteOff = MidiStreamPlayer_NoteOff;
     midi.controlChange = MidiStreamPlayer_ControlChange;
     midi.ff = &mdiCallbacks;
 
+    midi.midi_tempo = (60000000.0 / 100.0);
+
     midi_file_stream_load(filename, &midi);
 
-    for (uint8_t n = 0; n < trackToPlay; n++)
+    printf("number_of_tracks: %d\n", midi.number_of_tracks);
+    printf("file_format: %d\n", midi.file_format);
+    printf("division_type_and_resolution: %d\n", interpret_uint16(midi.division_type_and_resolution));
+
+    if (midi.file_format == 1)
     {
-        MidiStreamSkipTrack(&midi);
+        MidiStreamParseTrack(&midi);
+
+        float temp_f = (60000000.0 / midi.midi_tempo);
+        printf("midi_tempo: %d\n", midi.midi_tempo);
+        printf("tempo: %0.3f\n", temp_f);
+
+        for (uint8_t n = 1; n < trackToPlay; n++)
+        {
+            MidiStreamSkipTrack(&midi);
+        }
     }
 
     MidiStreamReadTrackPrepare(&midi);
 
-    midiPlaying = true;
     duration = 0;
+    long shortDuration;
+    midiPlaying = MidiStreamReadSingleEventTime(&midi, &shortDuration);
+    if (midiPlaying)
+    {
+        Serial.printf("Started midi file playback\n");
+    }
+    else
+    {
+        Serial.printf("Couldn't start midi file playback\n");
+    }
 
-    MidiStreamReadSingleEventTime(&midi, &duration);
+    duration = shortDuration;
     duration *= SAMPLE_RATE;
+    duration *= midi.midi_tempo;
 }
 
-void MidiStreamPlayer_Tick(long ticks)
+void MidiStreamPlayer_Tick(uint32_t ticks)
 {
-    static long tickCnt = 0;
+    static uint64_t tickCnt = 0;
 
     if (midiPlaying)
     {
-        tickCnt += ticks * 1500;
+        uint64_t longTick = ticks;
+        longTick *= (uint64_t)interpret_uint16(midi.division_type_and_resolution);
+        longTick *= 1000000;
+        tickCnt += longTick;
 
         while ((tickCnt > duration) && midiPlaying)
         {
@@ -293,8 +328,11 @@ void MidiStreamPlayer_Tick(long ticks)
 
             midiPlaying &= MidiStreamReadSingleEvent(&midi);
 
-            midiPlaying &= MidiStreamReadSingleEventTime(&midi, &duration);
+            long shortDuration;
+            midiPlaying &= MidiStreamReadSingleEventTime(&midi, &shortDuration);
+            duration = shortDuration;
             duration *= SAMPLE_RATE;
+            duration *= midi.midi_tempo;
         }
     }
 }
@@ -305,12 +343,12 @@ void MidiStreamPlayer_ListFiles(uint8_t filesystem)
     {
     case MIDI_FS_LITTLE_FS:
         {
-            if (!LITTLEFS.begin(FORMAT_LITTLEFS_IF_FAILED))
+            if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED))
             {
-                Serial.println("LITTLEFS Mount Failed");
+                Serial.println("LittleFS Mount Failed");
                 return;
             }
-            listDir(LITTLEFS, "/", 3);
+            listDir(LittleFS, "/", 3);
             break;
         }
     case MIDI_FS_SD_MMC:

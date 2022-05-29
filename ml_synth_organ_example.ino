@@ -68,39 +68,16 @@
 #include <Wire.h> /* todo remove, just for scanning */
 #endif
 
-void blink(uint8_t cnt)
-{
-    delay(500);
-    for (int i = 0; i < cnt; i++)
-    {
-        digitalWrite(LED_PIN, HIGH);
-        delay(50);
-        digitalWrite(LED_PIN, LOW);
-        delay(200);
-    }
-}
-
-void blink_slow(uint8_t cnt)
-{
-    delay(500);
-    for (int i = 0; i < cnt; i++)
-    {
-
-        digitalWrite(LED_PIN, HIGH);
-        delay(200);
-        digitalWrite(LED_PIN, LOW);
-        delay(100);
-    }
-}
-
 void setup()
 {
     /*
      * this code runs once
      */
 
-    pinMode(LED_PIN, OUTPUT);
-    blink(1);
+#ifdef BLINK_LED_PIN
+    Blink_Setup();
+    Blink_Fast(1);
+#endif
 
 #ifdef ARDUINO_DAISY_SEED
     DaisySeed_Setup();
@@ -128,14 +105,6 @@ void setup()
     System_PrintInfo(user);
 #endif
 #endif
-
-
-    Serial.printf("Firmware started successfully\n");
-
-
-
-#ifdef BLINK_LED_PIN
-    Blink_Setup();
 #endif
 
 #ifdef ESP8266
@@ -190,10 +159,6 @@ void setup()
     static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
-#endif
-
-#ifdef LED_PIN
-    pinMode(LED_PIN, OUTPUT);
 #endif
 
 #ifdef ESP32
