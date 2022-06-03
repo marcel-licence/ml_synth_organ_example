@@ -243,7 +243,7 @@ void MidiDataCallback(uint8_t *data, uint8_t data_len)
 }
 
 uint64_t duration = 0;
-struct midi_proc_s midi;
+struct midi_proc_s midiStreamPlayerHandle;
 
 void MidiStreamPlayer_NoteOn(uint8_t ch, uint8_t note, uint8_t vel)
 {
@@ -264,39 +264,39 @@ void MidiStreamPlayer_PlayMidiFile_fromLittleFS(char *filename, uint8_t trackToP
 {
     Serial.printf("Try to open %s from LittleFS\n", filename);
 
-    midi.raw = MidiDataCallback;
-    midi.noteOn = MidiStreamPlayer_NoteOn;
-    midi.noteOff = MidiStreamPlayer_NoteOff;
-    midi.controlChange = MidiStreamPlayer_ControlChange;
-    midi.ff = &mdiCallbacks;
+    midiStreamPlayerHandle.raw = MidiDataCallback;
+    midiStreamPlayerHandle.noteOn = MidiStreamPlayer_NoteOn;
+    midiStreamPlayerHandle.noteOff = MidiStreamPlayer_NoteOff;
+    midiStreamPlayerHandle.controlChange = MidiStreamPlayer_ControlChange;
+    midiStreamPlayerHandle.ff = &mdiCallbacks;
 
-    midi.midi_tempo = (60000000.0 / 100.0);
+    midiStreamPlayerHandle.midi_tempo = (60000000.0 / 100.0);
 
-    midi_file_stream_load(filename, &midi);
+    midi_file_stream_load(filename, &midiStreamPlayerHandle);
 
-    printf("number_of_tracks: %d\n", midi.number_of_tracks);
-    printf("file_format: %d\n", midi.file_format);
-    printf("division_type_and_resolution: %d\n", interpret_uint16(midi.division_type_and_resolution));
+    printf("number_of_tracks: %d\n", midiStreamPlayerHandle.number_of_tracks);
+    printf("file_format: %d\n", midiStreamPlayerHandle.file_format);
+    printf("division_type_and_resolution: %d\n", interpret_uint16(midiStreamPlayerHandle.division_type_and_resolution));
 
-    if (midi.file_format == 1)
+    if (midiStreamPlayerHandle.file_format == 1)
     {
-        MidiStreamParseTrack(&midi);
+        MidiStreamParseTrack(&midiStreamPlayerHandle);
 
-        float temp_f = (60000000.0 / midi.midi_tempo);
-        printf("midi_tempo: %d\n", midi.midi_tempo);
+        float temp_f = (60000000.0 / midiStreamPlayerHandle.midi_tempo);
+        printf("midi_tempo: %d\n", midiStreamPlayerHandle.midi_tempo);
         printf("tempo: %0.3f\n", temp_f);
 
         for (uint8_t n = 1; n < trackToPlay; n++)
         {
-            MidiStreamSkipTrack(&midi);
+            MidiStreamSkipTrack(&midiStreamPlayerHandle);
         }
     }
 
-    MidiStreamReadTrackPrepare(&midi);
+    MidiStreamReadTrackPrepare(&midiStreamPlayerHandle);
 
     duration = 0;
     long shortDuration;
-    midiPlaying = MidiStreamReadSingleEventTime(&midi, &shortDuration);
+    midiPlaying = MidiStreamReadSingleEventTime(&midiStreamPlayerHandle, &shortDuration);
     if (midiPlaying)
     {
         Serial.printf("Started midi file playback\n");
@@ -308,7 +308,12 @@ void MidiStreamPlayer_PlayMidiFile_fromLittleFS(char *filename, uint8_t trackToP
 
     duration = shortDuration;
     duration *= SAMPLE_RATE;
-    duration *= midi.midi_tempo;
+    duration *= midiStreamPlayerHandle.midi_tempo;
+}
+
+void MidiStreamPlayer_StopPlayback(void)
+{
+    midiPlaying = false;
 }
 
 void MidiStreamPlayer_Tick(uint32_t ticks)
@@ -318,7 +323,7 @@ void MidiStreamPlayer_Tick(uint32_t ticks)
     if (midiPlaying)
     {
         uint64_t longTick = ticks;
-        longTick *= (uint64_t)interpret_uint16(midi.division_type_and_resolution);
+        longTick *= (uint64_t)interpret_uint16(midiStreamPlayerHandle.division_type_and_resolution);
         longTick *= 1000000;
         tickCnt += longTick;
 
@@ -326,13 +331,13 @@ void MidiStreamPlayer_Tick(uint32_t ticks)
         {
             tickCnt -= duration;
 
-            midiPlaying &= MidiStreamReadSingleEvent(&midi);
+            midiPlaying &= MidiStreamReadSingleEvent(&midiStreamPlayerHandle);
 
             long shortDuration;
-            midiPlaying &= MidiStreamReadSingleEventTime(&midi, &shortDuration);
+            midiPlaying &= MidiStreamReadSingleEventTime(&midiStreamPlayerHandle, &shortDuration);
             duration = shortDuration;
             duration *= SAMPLE_RATE;
-            duration *= midi.midi_tempo;
+            duration *= midiStreamPlayerHandle.midi_tempo;
         }
     }
 }
