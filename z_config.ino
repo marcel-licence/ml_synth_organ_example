@@ -70,8 +70,13 @@ struct midiControllerMapping edirolMapping[] =
     /* upper row of buttons */
     { 0x0, 0x50, "A1", NULL, NULL, 0},
     { 0x1, 0x50, "A2", NULL, NULL, 1},
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    { 0x2, 0x50, "A3", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PAUSE},
+    { 0x3, 0x50, "A4", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_START},
+#else
     { 0x2, 0x50, "A3", NULL, NULL, 2},
     { 0x3, 0x50, "A4", NULL, NULL, 3},
+#endif
 
     { 0x4, 0x50, "A5", NULL, NULL, 0},
     { 0x5, 0x50, "A6", NULL, NULL, 1},
