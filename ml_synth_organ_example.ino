@@ -105,7 +105,6 @@ void setup()
     System_PrintInfo(user);
 #endif
 #endif
-#endif
 
 #ifdef ESP8266
     Midi_Setup();
