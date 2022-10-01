@@ -151,6 +151,9 @@ extern struct midiMapping_s midiMapping; /* definition in z_config.ino */
 
 inline void Midi_NoteOn(uint8_t ch, uint8_t note, uint8_t vel)
 {
+#ifdef MIDI_BLE_ENABLED
+    Ble_NoteOn(ch, note, vel);
+#endif
     if (vel > 127)
     {
         /* we will end up here in case of problems with the MIDI connection */
@@ -170,6 +173,9 @@ inline void Midi_NoteOn(uint8_t ch, uint8_t note, uint8_t vel)
 
 inline void Midi_NoteOff(uint8_t ch, uint8_t note)
 {
+#ifdef MIDI_BLE_ENABLED
+    Ble_NoteOff(ch, note);
+#endif
     if (midiMapping.noteOff != NULL)
     {
         midiMapping.noteOff(ch, note);
@@ -181,6 +187,9 @@ inline void Midi_NoteOff(uint8_t ch, uint8_t note)
  */
 inline void Midi_ControlChange(uint8_t channel, uint8_t data1, uint8_t data2)
 {
+#ifdef MIDI_BLE_ENABLED
+    Ble_ControlChange(channel, data1, data2);
+#endif
     for (int i = 0; i < midiMapping.mapSize; i++)
     {
         if ((midiMapping.controlMapping[i].channel == channel) && (midiMapping.controlMapping[i].data1 == data1))
@@ -215,7 +224,11 @@ inline void Midi_ControlChange(uint8_t channel, uint8_t data1, uint8_t data2)
 
 inline void Midi_PitchBend(uint8_t ch, uint16_t bend)
 {
-    float value = ((float)bend - 8192.0f) * (1.0f / 8192.0f) - 1.0f;
+#ifdef MIDI_BLE_ENABLED
+    Ble_PitchBend(ch, bend);
+#endif
+
+    float value = ((float)bend - 8192.0f) * (1.0f / 8192.0f);
     if (midiMapping.pitchBend != NULL)
     {
         midiMapping.pitchBend(ch, value);
@@ -224,6 +237,10 @@ inline void Midi_PitchBend(uint8_t ch, uint16_t bend)
 
 inline void Midi_SongPositionPointer(uint16_t pos)
 {
+#ifdef MIDI_BLE_ENABLED
+    Ble_SongPos(pos);
+#endif
+
     if (midiMapping.songPos != NULL)
     {
         midiMapping.songPos(pos);
@@ -259,7 +276,7 @@ inline void Midi_HandleShortMsg(uint8_t *data, uint8_t cable __attribute__((unus
         break;
     /* pitchbend */
     case 0xe0:
-        Midi_PitchBend(ch, ((((uint16_t)data[1])) + ((uint16_t)data[2] << 8)));
+        Midi_PitchBend(ch, ((((uint16_t)data[1])) + ((uint16_t)data[2] << 7)));
         break;
     /* song position pointer */
     case 0xf2:
@@ -288,7 +305,7 @@ void Midi_Setup()
 {
 #ifdef MIDI_RECV_FROM_SERIAL
     MidiPort.serial = &Serial;
-    Serial.printf("MIDI listen on Serial\n", MIDI_SERIAL_BAUDRATE);
+    Serial.printf("MIDI listen on Serial with %d baud\n", MIDI_SERIAL_BAUDRATE);
 #endif /* MIDI_RECV_FROM_SERIAL */
 
 #ifdef MIDI_PORT_ACTIVE

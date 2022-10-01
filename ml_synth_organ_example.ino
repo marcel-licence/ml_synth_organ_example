@@ -105,7 +105,6 @@ void setup()
     System_PrintInfo(user);
 #endif
 #endif
-#endif
 
 #ifdef ESP8266
     Midi_Setup();
@@ -159,6 +158,10 @@ void setup()
     static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
+#endif
+
+#ifdef MIDI_BLE_ENABLED
+    midi_ble_setup();
 #endif
 
 #ifdef ESP32
@@ -259,8 +262,6 @@ void Core0Task(void *parameter)
 }
 #endif /* ESP32 */
 
-
-
 void loop_1Hz()
 {
 #ifdef CYCLE_MODULE_ENABLED
@@ -295,6 +296,10 @@ void loop()
 #endif
 #ifdef MIDI_STREAM_PLAYER_ENABLED
     MidiStreamPlayer_Tick(SAMPLE_BUFFER_SIZE);
+#endif
+
+#ifdef MIDI_BLE_ENABLED
+    midi_ble_loop();
 #endif
 
     /*
