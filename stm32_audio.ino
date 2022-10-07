@@ -100,7 +100,7 @@ void register_read(uint8_t reg, uint8_t &value)
     value = I2C_ReadReg(0x4A, reg);
 }
 
-#endif /*SETUP_CS43L22_CODEC */
+#endif /* SETUP_CS43L22_CODEC */
 
 /*
  * object to access I2S interface

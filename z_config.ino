@@ -73,10 +73,17 @@ struct midiControllerMapping edirolMapping[] =
     { 0x2, 0x50, "A3", NULL, NULL, 2},
     { 0x3, 0x50, "A4", NULL, NULL, 3},
 
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    { 0x4, 0x50, "A5", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PAUSE},
+    { 0x5, 0x50, "A6", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_STOP},
+    { 0x6, 0x50, "A7", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PLAY},
+    { 0x7, 0x50, "A8", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_SKIP},
+#else7
     { 0x4, 0x50, "A5", NULL, NULL, 0},
     { 0x5, 0x50, "A6", NULL, NULL, 1},
     { 0x6, 0x50, "A7", NULL, NULL, 2},
     { 0x7, 0x50, "A8", NULL, NULL, 0},
+#endif
 
     { 0x0, 0x53, "A9", NULL, NULL, 0},
 
@@ -110,7 +117,11 @@ struct midiControllerMapping edirolMapping[] =
     { 0x1, 0x12, "S9", NULL, Organ_SetDrawbarInv, 8},
 
     /* rotary */
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    { 0x0, 0x10, "R1", NULL, MidiStreamPlayerTempo, 0},
+#else
     { 0x0, 0x10, "R1", NULL, Organ_SetCtrl, 0},
+#endif
     { 0x1, 0x10, "R2", NULL, Organ_SetCtrl, 1},
     { 0x2, 0x10, "R3", NULL, Organ_SetCtrl, 2},
 #if 1
@@ -132,6 +143,13 @@ struct midiControllerMapping edirolMapping[] =
 
     /* Central slider */
     { 0x0, 0x13, "H1", NULL, Organ_SetLeslieSpeedNorm, 0},
+
+
+    /* MIDI defaults */
+    { 0x0, 7, "Volume", NULL, NULL, 0},
+    { 0x0, 91, "Reverb", NULL, Reverb_SetLevelInt, 8},
+    { 0x0, 93, "Chorus", NULL, Organ_SetLeslieSpeedNorm, 0},
+
 };
 
 struct midiMapping_s midiMapping =
