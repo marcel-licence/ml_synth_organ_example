@@ -164,6 +164,10 @@ void setup()
     midi_ble_setup();
 #endif
 
+#ifdef USB_HOST_ENABLED
+    Usb_Host_Midi_setup();
+#endif
+
 #ifdef ESP32
     Serial.printf("ESP.getFreeHeap() %d\n", ESP.getFreeHeap());
     Serial.printf("ESP.getMinFreeHeap() %d\n", ESP.getMinFreeHeap());
@@ -305,11 +309,15 @@ void loop()
     midi_ble_loop();
 #endif
 
+#ifdef USB_HOST_ENABLED
+    Usb_Host_Midi_loop();
+#endif
+
     /*
      * And finally the audio stuff
      */
 #ifdef USE_ML_SYNTH_PRO
-#if (defined ESP8266) || (defined ARDUINO_SEEED_XIAO_M0)|| (defined ARDUINO_RASPBERRY_PI_PICO)
+#if (defined ESP8266) || (defined ARDUINO_SEEED_XIAO_M0) || (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
 #error Configuration is not supported
 #else
     float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
@@ -343,6 +351,14 @@ void loop()
 
 #ifdef OLED_OSC_DISP_ENABLED
     ScopeOled_AddSamples(left, right, SAMPLE_BUFFER_SIZE);
+#ifdef TEENSYDUINO
+    static uint8_t x = 0;
+    x++;
+    if (x == 0)
+    {
+        ScopeOled_Process();
+    }
+#endif
 #endif
 #endif
 #else

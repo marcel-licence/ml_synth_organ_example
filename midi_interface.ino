@@ -93,6 +93,11 @@ HardwareSerial Serial2(USART1);
 HardwareSerial Serial2(USART2); /* PA3 */
 #endif
 
+#if 0
+#ifdef ARDUINO_GENERIC_F407VGTX
+HardwareSerial Serial2(USART3); /* PB11 */
+#endif
+#endif
 
 #ifdef MIDI_PORT_ACTIVE
 struct midi_port_s MidiPort;
@@ -123,6 +128,15 @@ struct midiControllerMapping
     uint8_t user_data;
 };
 
+#ifdef MIDI_MAP_FLEX_ENABLED
+struct midiMapLookUpEntry
+{
+    const char *desc;
+    struct midiControllerMapping *controlMap;
+    int controlMapSize;
+};
+#endif
+
 struct midiMapping_s
 {
     void (*rawMsg)(uint8_t *msg);
@@ -142,9 +156,22 @@ struct midiMapping_s
 
     struct midiControllerMapping *controlMapping;
     int mapSize;
+
+#ifdef MIDI_MAP_FLEX_ENABLED
+    /* the following map can be changed  during runtime */
+    struct midiControllerMapping *controlMapping_flex;
+    int mapSize_flex;
+#endif
 };
 
-extern struct midiMapping_s midiMapping; /* definition in z_config.ino */
+/*
+ * following variables shall be defined in z_config.ino
+ */
+extern struct midiMapping_s midiMapping;
+#ifdef MIDI_MAP_FLEX_ENABLED
+extern struct midiMapLookUpEntry midiMapLookUp[];
+extern int midiMapLookUpCnt;
+#endif
 
 /* constant to normalize midi value to 0.0 - 1.0f */
 #define NORM127MUL  0.007874f
@@ -182,6 +209,28 @@ inline void Midi_NoteOff(uint8_t ch, uint8_t note)
     }
 }
 
+inline void Midi_CC_Map(uint8_t channel, uint8_t data1, uint8_t data2, struct midiControllerMapping *controlMapping, int mapSize)
+{
+    for (int i = 0; i < mapSize; i++)
+    {
+        if ((controlMapping[i].channel == channel) && (controlMapping[i].data1 == data1))
+        {
+            if (controlMapping[i].callback_mid != NULL)
+            {
+                controlMapping[i].callback_mid(channel, data1, data2);
+            }
+            if (controlMapping[i].callback_val != NULL)
+            {
+#ifdef MIDI_FMT_INT
+                controlMapping[i].callback_val(controlMapping[i].user_data, data2);
+#else
+                controlMapping[i].callback_val(controlMapping[i].user_data, (float)data2 * NORM127MUL);
+#endif
+            }
+        }
+    }
+}
+
 /*
  * this function will be called when a control change message has been received
  */
@@ -190,24 +239,11 @@ inline void Midi_ControlChange(uint8_t channel, uint8_t data1, uint8_t data2)
 #ifdef MIDI_BLE_ENABLED
     Ble_ControlChange(channel, data1, data2);
 #endif
-    for (int i = 0; i < midiMapping.mapSize; i++)
-    {
-        if ((midiMapping.controlMapping[i].channel == channel) && (midiMapping.controlMapping[i].data1 == data1))
-        {
-            if (midiMapping.controlMapping[i].callback_mid != NULL)
-            {
-                midiMapping.controlMapping[i].callback_mid(channel, data1, data2);
-            }
-            if (midiMapping.controlMapping[i].callback_val != NULL)
-            {
-#ifdef MIDI_FMT_INT
-                midiMapping.controlMapping[i].callback_val(midiMapping.controlMapping[i].user_data, data2);
-#else
-                midiMapping.controlMapping[i].callback_val(midiMapping.controlMapping[i].user_data, (float)data2 * NORM127MUL);
+
+    Midi_CC_Map(channel, data1, data2, midiMapping.controlMapping, midiMapping.mapSize);
+#ifdef MIDI_MAP_FLEX_ENABLED
+    Midi_CC_Map(channel, data1, data2, midiMapping.controlMapping_flex, midiMapping.mapSize_flex);
 #endif
-            }
-        }
-    }
 
     if (data1 == 1)
     {
@@ -366,6 +402,10 @@ void Midi_Setup()
     Midi_PortSetup(&MidiPort2);
     Serial.printf("Setup MidiPort2 using Serial2\n");
 #endif /* MIDI_PORT2_ACTIVE */
+
+#ifdef USB_MIDI_ENABLED
+    UbsMidiSetup();
+#endif
 }
 
 void Midi_CheckMidiPort(struct midi_port_s *port)
@@ -451,6 +491,9 @@ void Midi_Process()
 #ifdef MIDI_PORT2_ACTIVE
     Midi_CheckMidiPort(&MidiPort2);
 #endif
+#ifdef USB_MIDI_ENABLED
+    UbsMidiLoop();
+#endif
 }
 
 #ifndef ARDUINO_SEEED_XIAO_M0
@@ -481,5 +524,22 @@ void Midi_SendRaw(uint8_t *msg)
 }
 #endif /* MIDI_TX2_PIN */
 #endif
+#endif
+
+#ifdef MIDI_MAP_FLEX_ENABLED
+void Midi_SetMidiMap(struct midiControllerMapping *controlMapping, int mapSize)
+{
+    midiMapping.controlMapping_flex = controlMapping;
+    midiMapping.mapSize_flex = mapSize;
+}
+
+void Midi_SetMidiMapByIndex(uint8_t index, float value)
+{
+    if (index < midiMapLookUpCnt)
+    {
+        Midi_SetMidiMap(midiMapLookUp[index].controlMap, midiMapLookUp[index].controlMapSize);
+        Serial.printf("Midi map %s selected\n", midiMapLookUp[index].desc);
+    }
+}
 #endif
 

@@ -64,7 +64,7 @@
 #include "DaisyDuino.h"
 #endif
 
-#ifdef ARDUINO_RASPBERRY_PI_PICO
+#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
 #include <I2S.h>
 #endif
 
@@ -114,7 +114,7 @@ void Audio_Setup(void)
     pinMode(DAC0, OUTPUT);
 #endif
 
-#ifdef ARDUINO_RASPBERRY_PI_PICO
+#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
     if (!I2S.begin(SAMPLE_RATE))
     {
         Serial.println("Failed to initialize I2S!");
@@ -321,7 +321,7 @@ void Audio_OutputMono(const int32_t *samples)
     memcpy(u32buf, samples, sizeof(int32_t)*SAMPLE_BUFFER_SIZE);
 #endif /* ARDUINO_SEEED_XIAO_M0 */
 
-#ifdef ARDUINO_RASPBERRY_PI_PICO
+#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
     /*
      * @see https://arduino-pico.readthedocs.io/en/latest/i2s.html
      * @see https://www.waveshare.com/pico-audio.htm for connections
@@ -344,7 +344,7 @@ void Audio_OutputMono(const int32_t *samples)
     memcpy(u16int_buf, u16int, sizeof(u16int));
     I2S.write(u16int_buf, sizeof(u16int));
 #endif
-#endif /* ARDUINO_RASPBERRY_PI_PICO */
+#endif /* ARDUINO_RASPBERRY_PI_PICO, ARDUINO_GENERIC_RP2040 */
 
 #ifdef ARDUINO_GENERIC_F407VGTX
     /*
@@ -373,6 +373,10 @@ void Audio_Output(const float *left, const float *right)
 #endif
 {
 #ifdef OUTPUT_SAW_TEST
+    /*
+     * base frequency: SAMPLE_FREQ / SAMPLE_BUFFER_SIZE
+     * for example: Fs : 44100Hz, Lsb = 48 -> Freq: 918.75 Hz
+     */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         left[i] = ((float)i * 2.0f) / ((float)SAMPLE_BUFFER_SIZE);

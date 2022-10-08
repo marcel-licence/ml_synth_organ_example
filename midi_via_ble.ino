@@ -176,24 +176,10 @@ void midi_ble_setup()
     {
         channel -= 1;
 
-        for (int i = 0; i < midiMapping.mapSize; i++)
-        {
-            if ((midiMapping.controlMapping[i].channel == channel) && (midiMapping.controlMapping[i].data1 == number))
-            {
-                if (midiMapping.controlMapping[i].callback_mid != NULL)
-                {
-                    midiMapping.controlMapping[i].callback_mid(channel, number, value);
-                }
-                if (midiMapping.controlMapping[i].callback_val != NULL)
-                {
-#ifdef MIDI_FMT_INT
-                    midiMapping.controlMapping[i].callback_val(midiMapping.controlMapping[i].user_data, value);
-#else
-                    midiMapping.controlMapping[i].callback_val(midiMapping.controlMapping[i].user_data, (float)value * NORM127MUL);
+        Midi_CC_Map(channel, number, value, midiMapping.controlMapping, midiMapping.mapSize);
+#ifdef MIDI_MAP_FLEX_ENABLED
+        Midi_CC_Map(channel, number, value, midiMapping.controlMapping_flex, midiMapping.mapSize_flex);
 #endif
-                }
-            }
-        }
 
         if (number == 1)
         {
