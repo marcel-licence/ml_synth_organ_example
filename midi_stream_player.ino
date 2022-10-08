@@ -66,13 +66,7 @@ extern SdFatFs fatFs;
 #define FST fs::FS
 #endif
 
-#define MIDI_FS_LITTLE_FS   0
-#ifdef MIDI_STREAM_PLAYER_SD_MMC_ENABLED
-#define MIDI_FS_SD_MMC  1
-#endif
-
-#define FORMAT_LITTLEFS_IF_FAILED true
-
+#ifdef ESP32
 
 #include <FS.h>
 #ifdef ARDUINO_RUNNING_CORE /* tested with arduino esp32 core version 2.0.2 */
@@ -82,6 +76,29 @@ extern SdFatFs fatFs;
 #define LittleFS LITTLEFS
 #endif
 #include <SD_MMC.h>
+
+#define MIDI_FS_LITTLE_FS   0
+#ifdef MIDI_STREAM_PLAYER_SD_MMC_ENABLED
+#define MIDI_FS_SD_MMC  1
+#endif
+
+#endif
+
+#ifdef ESP8266
+#include <FS.h>
+#include <LittleFS.h> /* Using library LittleFS at version 2.0.0 from https://github.com/espressif/arduino-esp32 */
+#define MIDI_FS_LITTLE_FS   0
+#endif
+
+
+#ifdef ESP8266_DEPRECATED /* used to try using deprecated SPIFFS */
+#include <SPIFFS.h>
+#define MIDI_FS_SPIFFS   2
+#endif
+
+
+#define FORMAT_LITTLEFS_IF_FAILED true
+
 
 #include <ml_midi_file_stream.h>
 
@@ -451,6 +468,7 @@ void MidiStreamPlayer_Tick(uint32_t ticks)
 
         while ((tickCnt > duration) && midiPlaying)
         {
+            //printf("%lld\n", tickCnt);
             tickCnt -= duration;
 
             midiPlaying &= MidiStreamReadSingleEvent(&midiStreamPlayerHandle);
@@ -460,6 +478,7 @@ void MidiStreamPlayer_Tick(uint32_t ticks)
             duration = shortDuration;
             duration *= SAMPLE_RATE;
             duration *= midiStreamPlayerHandle.midi_tempo;
+            //Serial.printf("duration: %ld\n", shortDuration);
         }
     }
 }
