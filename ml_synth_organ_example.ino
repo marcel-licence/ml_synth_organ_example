@@ -181,6 +181,9 @@ void setup()
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
     OrganPro_SetLeslCtrl(127);
+#ifndef SOC_CPU_HAS_FPU
+    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)");
+#endif
 #else
     Organ_NoteOn(0, 60, 127);
     Organ_SetLeslCtrl(127);

@@ -48,6 +48,7 @@
 
 #ifdef MIDI_STREAM_PLAYER_ENABLED
 
+//#define MIDI_STREAM_PLAYER_SD_MMC_ENABLED
 
 //#define MIDI_STREAM_PLAYER_DATA_DUMP /*!< optional to dump event data from midi file */
 
@@ -66,8 +67,9 @@ extern SdFatFs fatFs;
 #endif
 
 #define MIDI_FS_LITTLE_FS   0
+#ifdef MIDI_STREAM_PLAYER_SD_MMC_ENABLED
 #define MIDI_FS_SD_MMC  1
-
+#endif
 
 #define FORMAT_LITTLEFS_IF_FAILED true
 
@@ -197,7 +199,9 @@ char MIDI_seek(struct file_access_f *ff, int pos, uint8_t mode)
 void MidiStreamPlayer_Init()
 {
     MidiStreamPlayer_ListFiles(MIDI_FS_LITTLE_FS);
+#ifdef MIDI_FS_SD_MMC
     MidiStreamPlayer_ListFiles(MIDI_FS_SD_MMC);
+#endif
 }
 
 void MidiStreamPlayer_PlayFile(char *midi_filename)
@@ -468,6 +472,7 @@ void MidiStreamPlayer_ListFiles(uint8_t filesystem)
             listDir(LittleFS, "/", 3);
             break;
         }
+#ifdef MIDI_FS_SD_MMC
     case MIDI_FS_SD_MMC:
         {
             if (!SD_MMC.begin())
@@ -507,6 +512,7 @@ void MidiStreamPlayer_ListFiles(uint8_t filesystem)
             listDir(SD_MMC, "/", 0);
         }
         break;
+#endif
     }
 }
 

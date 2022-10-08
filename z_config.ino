@@ -78,7 +78,7 @@ struct midiControllerMapping edirolMapping[] =
     { 0x5, 0x50, "A6", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_STOP},
     { 0x6, 0x50, "A7", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PLAY},
     { 0x7, 0x50, "A8", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_SKIP},
-#else7
+#else
     { 0x4, 0x50, "A5", NULL, NULL, 0},
     { 0x5, 0x50, "A6", NULL, NULL, 1},
     { 0x6, 0x50, "A7", NULL, NULL, 2},
