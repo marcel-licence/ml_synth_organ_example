@@ -366,12 +366,12 @@ void Audio_OutputMono(const int32_t *samples)
         };
     };
 
-    while (!BufferReady())
+    while (!RP2040_Audio_Pwm_BufferReady())
     {
         /* block! */
     }
 
-    union sample *audioBuff = (union sample *) getFreeBuff();
+    union sample *audioBuff = (union sample *) RP2040_Audio_Pwm_getFreeBuff();
 
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
