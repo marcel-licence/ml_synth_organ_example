@@ -68,11 +68,18 @@
 #include <Wire.h> /* todo remove, just for scanning */
 #endif
 
+
+char shortName[] = "ML_Organ";
+
+
 void setup()
 {
     /*
      * this code runs once
      */
+#ifdef MIDI_USB_ENABLED
+    Midi_Usb_Setup();
+#endif
 
 #ifdef BLINK_LED_PIN
     Blink_Setup();
@@ -311,6 +318,10 @@ void loop()
 
 #ifdef USB_HOST_ENABLED
     Usb_Host_Midi_loop();
+#endif
+
+#ifdef MIDI_USB_ENABLED
+    Midi_Usb_Loop();
 #endif
 
     /*

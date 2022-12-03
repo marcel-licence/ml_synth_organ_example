@@ -215,15 +215,23 @@ SoftwareSerial Serial2(RXD2, TXD2);
  *
  * Pinout @see https://www.raspberrypi-spy.co.uk/2021/01/pi-pico-pinout-and-power-pins/#prettyPhoto
  */
-#ifdef ARDUINO_RASPBERRY_PI_PICO
+#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
 
-#define LED_PIN LED_BUILTIN
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+#define BLINK_LED_PIN LED_BUILTIN
+#else
+#define BLINK_LED_PIN 19
+#endif
 #define SAMPLE_BUFFER_SIZE  48
-#define SAMPLE_RATE  44100
+#define SAMPLE_RATE  48000
 
 #define MIDI_PORT2_ACTIVE
 
-#endif /* ARDUINO_RASPBERRY_PI_PICO */
+#define MIDI_USB_ENABLED /* connect RP2040 as a USB device */
+
+#define RP2040_AUDIO_PWM
+
+#endif /* ARDUINO_RASPBERRY_PI_PICO, ARDUINO_GENERIC_RP2040 */
 
 /*
  * Configuration for
