@@ -164,6 +164,7 @@ struct midiMapping_s midiMapping =
 #endif
     NULL,
     Organ_ModulationWheel,
+    NULL, /* assign program change callback here! */
     NULL,
     NULL,
     edirolMapping,
