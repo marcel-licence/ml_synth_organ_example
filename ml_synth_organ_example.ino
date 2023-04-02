@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Marcel Licence
+ * Copyright (c) 2023 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,14 +68,7 @@
 
 
 #define ML_SYNTH_INLINE_DECLARATION
-#include <i2s_interface.h>
-#include <i2s_module.h>
-#include <samd21_audio_core.h>
-#include <audio_module.h>
-#include <midi_interface.h>
-#include <midi_stream_player.h>
-#include <midi_via_ble.h>
-#include <midi_via_usb.h>
+#include <ml_inline.h>
 #undef ML_SYNTH_INLINE_DECLARATION
 
 
