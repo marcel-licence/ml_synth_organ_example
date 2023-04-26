@@ -7,7 +7,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.4<br />
 <b>Board:</b> WEMOS D1 MINI ESP32<br />
 <br />
-<b>Program storage space:</b> 762845 bytes<br />
+<b>Program storage space:</b> 762985 bytes<br />
 <b>Dynamic memory:</b> 79208 bytes<br />
 <br />
 <b>Flash Frequency:</b> 80MHz<br />
@@ -79,7 +79,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.5<br />
 <b>Board:</b> WEMOS D1 MINI ESP32<br />
 <br />
-<b>Program storage space:</b> 763897 bytes<br />
+<b>Program storage space:</b> 764037 bytes<br />
 <b>Dynamic memory:</b> 78720 bytes<br />
 <br />
 <b>Flash Frequency:</b> 80MHz<br />
@@ -151,8 +151,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.5.0<br />
 <b>Board:</b> Generic STM32H7 Series<br />
 <br />
-<b>Program storage space:</b> 114772 bytes<br />
-<b>Dynamic memory:</b> 44188 bytes<br />
+<b>Program storage space:</b> 115512 bytes<br />
+<b>Dynamic memory:</b> 44192 bytes<br />
 <br />
 <b>Board part number:</b> Daisy Seed<br />
 <b>Upload method:</b> STM32CubeProgrammer (SWD)<br />
@@ -233,7 +233,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.0<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 724925 bytes<br />
+<b>Program storage space:</b> 725089 bytes<br />
 <b>Dynamic memory:</b> 79268 bytes<br />
 <br />
 <b>PSRAM:</b> Disabled<br />
@@ -310,7 +310,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.7<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 790145 bytes<br />
+<b>Program storage space:</b> 790189 bytes<br />
 <b>Dynamic memory:</b> 83916 bytes<br />
 <br />
 <b>JTAG Adapter:</b> Disabled<br />
@@ -389,7 +389,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 1.0.6<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 722314 bytes<br />
+<b>Program storage space:</b> 722462 bytes<br />
 <b>Dynamic memory:</b> 79692 bytes<br />
 <br />
 <b>PSRAM:</b> Disabled<br />
@@ -464,7 +464,7 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 3.0.2<br />
 <b>Board:</b> LOLIN(WEMOS) D1 R2 & mini<br />
 <br />
-<b>Program storage space:</b> 317581 bytes<br />
+<b>Program storage space:</b> 317565 bytes<br />
 <b>Dynamic memory:</b> 70260 bytes<br />
 <br />
 <b>CPU Frequency:</b> 160 MHz<br />
@@ -551,8 +551,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 1.13.1<br />
 <b>Board:</b> Raspberry Pi Pico<br />
 <br />
-<b>Program storage space:</b> 79056 bytes<br />
-<b>Dynamic memory:</b> 50032 bytes<br />
+<b>Program storage space:</b> 79048 bytes<br />
+<b>Dynamic memory:</b> 50036 bytes<br />
 <br />
 <b>Flash Size:</b> 2MB (no FS)<br />
 <b>CPU Speed:</b> 125 MHz<br />
@@ -690,8 +690,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 1.13.1<br />
 <b>Board:</b> Generic RP2040<br />
 <br />
-<b>Program storage space:</b> 79056 bytes<br />
-<b>Dynamic memory:</b> 50032 bytes<br />
+<b>Program storage space:</b> 79048 bytes<br />
+<b>Dynamic memory:</b> 50036 bytes<br />
 <br />
 <b>Flash Size:</b> 2MB (no FS)<br />
 <b>CPU Speed:</b> 125 MHz<br />
