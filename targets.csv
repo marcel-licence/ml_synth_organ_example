@@ -10,3 +10,4 @@ esp8266:esp8266:d1_mini;3.0.2;
 rp2040:rp2040:rpipico;1.13.1;USBSTACK=tinyusb
 teensy:avr:teensy41;1.8.5;TEENSY_USB=serialmidiaudio
 rp2040:rp2040:generic;1.13.1;USBSTACK=tinyusb
+Seeeduino:samd:seeed_XIAO_m0;1.8.2;
