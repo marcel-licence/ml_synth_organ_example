@@ -146,7 +146,6 @@ void setup()
 #endif
 
 
-
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_Setup(&Serial, SAMPLE_RATE);
 #else
@@ -491,7 +490,7 @@ inline void Delay_SetFeedbackInt(uint8_t unused __attribute__((unused)), uint8_t
 }
 
 #if (defined ARDUINO_GENERIC_F407VGTX) || (defined ARDUINO_DISCO_F407VG)
-void  ScanI2C(void)
+void ScanI2C(void)
 {
 #ifdef ARDUINO_GENERIC_F407VGTX
     Wire.setSDA(I2C_SDA);
