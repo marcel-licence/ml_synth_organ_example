@@ -382,18 +382,23 @@ void loop()
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
-#ifdef REVERB_ENABLED
+#if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
     float mono_f[SAMPLE_BUFFER_SIZE];
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono_f[i] = mono[i];
     }
+#ifdef OLED_OSC_DISP_ENABLED
+    ScopeOled_AddSamples(mono_f, mono_f, SAMPLE_BUFFER_SIZE);
+#endif
+#ifdef REVERB_ENABLED
     Reverb_Process(mono_f, SAMPLE_BUFFER_SIZE); /* post reverb */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono[i] = mono_f[i];
     }
 #endif
+#endif /* #if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED) */
     Audio_OutputMono(mono);
 #endif
 }
