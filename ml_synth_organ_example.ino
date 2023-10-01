@@ -147,9 +147,9 @@ void setup()
 
 
 #ifdef USE_ML_SYNTH_PRO
-    OrganPro_Setup(&Serial, SAMPLE_RATE);
+    OrganPro_Setup(SAMPLE_RATE);
 #else
-    Organ_Setup(&Serial, SAMPLE_RATE);
+    Organ_Setup(SAMPLE_RATE);
 #endif
 
 #ifdef REVERB_ENABLED
