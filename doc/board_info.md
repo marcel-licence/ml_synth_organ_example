@@ -4,11 +4,11 @@ Below you will find a list of build which can be configured and should compile w
 
 <hr>
 <a name="STMicroelectronics_stm32_Disco"></a><b>Core:</b> <a h_ref="https://github.com/stm32duino/Arduino_Core_STM32">STM32 boards groups </a><br />
-<b>Version:</b> 2.5.0<br />
+<b>Version:</b> 2.6.0<br />
 <b>Board:</b> Discovery<br />
 <br />
-<b>Program storage space:</b> 84420 bytes<br />
-<b>Dynamic memory:</b> 32720 bytes<br />
+<b>Program storage space:</b> 89756 bytes<br />
+<b>Dynamic memory:</b> 33916 bytes<br />
 <br />
 <b>Board part number:</b> STM32F407G-DISC1<br />
 <b>Upload method:</b> STM32CubeProgrammer (SWD)<br />
@@ -79,11 +79,11 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
 </table><hr>
 <a name="STMicroelectronics_stm32_GenH7"></a><b>Core:</b> <a h_ref="https://github.com/stm32duino/Arduino_Core_STM32">STM32 boards groups </a><br />
-<b>Version:</b> 2.5.0<br />
+<b>Version:</b> 2.6.0<br />
 <b>Board:</b> Generic STM32H7 Series<br />
 <br />
-<b>Program storage space:</b> 113896 bytes<br />
-<b>Dynamic memory:</b> 36656 bytes<br />
+<b>Program storage space:</b> 113096 bytes<br />
+<b>Dynamic memory:</b> 37208 bytes<br />
 <br />
 <b>Board part number:</b> Daisy Seed<br />
 <b>Upload method:</b> STM32CubeProgrammer (SWD)<br />

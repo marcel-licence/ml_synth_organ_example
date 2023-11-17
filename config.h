@@ -268,7 +268,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN LED_USER_GREEN
 
 #define SAMPLE_BUFFER_SIZE  48
-#define SAMPLE_RATE  44100
+#define SAMPLE_RATE  48000
 
 //#define MIDI_PORT1_ACTIVE /* MIDI in : PIN A10  not tested*/
 #define MIDI_PORT2_ACTIVE /* MIDI in : PIN A3 */
