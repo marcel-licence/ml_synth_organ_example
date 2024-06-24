@@ -7,8 +7,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.6.0<br />
 <b>Board:</b> Discovery<br />
 <br />
-<b>Program storage space:</b> 89756 bytes<br />
-<b>Dynamic memory:</b> 33916 bytes<br />
+<b>Program storage space:</b> 81356 bytes<br />
+<b>Dynamic memory:</b> 33528 bytes<br />
 <br />
 <b>Board part number:</b> STM32F407G-DISC1<br />
 <b>Upload method:</b> STM32CubeProgrammer (SWD)<br />
@@ -30,7 +30,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -49,41 +49,13 @@ Below you will find a list of build which can be configured and should compile w
         <td></td>
         <td>True</td>
     </tr>
-    <tr>
-        <td>Adafruit GFX Library</td>
-        <td>1.11.5</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>Adafruit BusIO</td>
-        <td>1.14.1</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>SPI</td>
-        <td>1.0.0</td>
-        <td>http://www.arduino.cc/en/Reference/SPI</td>
-        <td></td>
-        <td>True</td>
-    </tr>
-    <tr>
-        <td>Adafruit SSD1306</td>
-        <td>2.5.7</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>False</td>
-    </tr>
 </table><hr>
 <a name="STMicroelectronics_stm32_GenH7"></a><b>Core:</b> <a h_ref="https://github.com/stm32duino/Arduino_Core_STM32">STM32 boards groups </a><br />
 <b>Version:</b> 2.6.0<br />
 <b>Board:</b> Generic STM32H7 Series<br />
 <br />
-<b>Program storage space:</b> 113096 bytes<br />
-<b>Dynamic memory:</b> 37208 bytes<br />
+<b>Program storage space:</b> 105248 bytes<br />
+<b>Dynamic memory:</b> 36768 bytes<br />
 <br />
 <b>Board part number:</b> Daisy Seed<br />
 <b>Upload method:</b> STM32CubeProgrammer (SWD)<br />
@@ -105,7 +77,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -131,40 +103,12 @@ Below you will find a list of build which can be configured and should compile w
         <td></td>
         <td>True</td>
     </tr>
-    <tr>
-        <td>Adafruit GFX Library</td>
-        <td>1.11.5</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>Adafruit BusIO</td>
-        <td>1.14.1</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>SPI</td>
-        <td>1.0.0</td>
-        <td>http://www.arduino.cc/en/Reference/SPI</td>
-        <td></td>
-        <td>True</td>
-    </tr>
-    <tr>
-        <td>Adafruit SSD1306</td>
-        <td>2.5.7</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>False</td>
-    </tr>
 </table><hr>
 <a name="Seeeduino_samd_seeed_XIAO_m0"></a><b>Core:</b> <a h_ref="https://github.com/Seeed-Studio/ArduinoCore-samd">Seeed SAMD </a><br />
 <b>Version:</b> 1.8.2<br />
 <b>Board:</b> Seeeduino XIAO<br />
 <br />
-<b>Program storage space:</b> 55628 bytes<br />
+<b>Program storage space:</b> 55636 bytes<br />
 <br />
 <b>USB Stack:</b> Arduino<br />
 <b>Debug:</b> Off<br />
@@ -180,7 +124,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -216,7 +160,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -236,47 +180,19 @@ Below you will find a list of build which can be configured and should compile w
         <td>True</td>
     </tr>
     <tr>
-        <td>Wire</td>
-        <td>1.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td>LittleFS</td>
+        <td>0.1.0</td>
+        <td>https://github.com/esp8266/Arduino/libraries/LittleFS</td>
         <td></td>
         <td>True</td>
-    </tr>
-    <tr>
-        <td>Adafruit GFX Library</td>
-        <td>1.11.5</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>Adafruit BusIO</td>
-        <td>1.14.1</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>SPI</td>
-        <td>1.0</td>
-        <td>http://arduino.cc/en/Reference/SPI</td>
-        <td></td>
-        <td>True</td>
-    </tr>
-    <tr>
-        <td>Adafruit SSD1306</td>
-        <td>2.5.7</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>False</td>
     </tr>
 </table><hr>
 <a name="espressif_2.0.4_esp32_d1_mini32"></a><b>Core:</b> <a h_ref="https://github.com/espressif/arduino-esp32">ESP32 Arduino </a><br />
 <b>Version:</b> 2.0.4<br />
 <b>Board:</b> WEMOS D1 MINI ESP32<br />
 <br />
-<b>Program storage space:</b> 757981 bytes<br />
-<b>Dynamic memory:</b> 72016 bytes<br />
+<b>Program storage space:</b> 767281 bytes<br />
+<b>Dynamic memory:</b> 72064 bytes<br />
 <br />
 <b>Flash Frequency:</b> 80MHz<br />
 <b>Partition Scheme:</b> No OTA (Large APP)<br />
@@ -295,10 +211,17 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
+    </tr>
+    <tr>
+        <td>Wire</td>
+        <td>2.0.0</td>
+        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
     </tr>
     <tr>
         <td>WiFi</td>
@@ -308,9 +231,23 @@ Below you will find a list of build which can be configured and should compile w
         <td>True</td>
     </tr>
     <tr>
-        <td>Wire</td>
+        <td>FS</td>
         <td>2.0.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>2.0.0</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>SD_MMC</td>
+        <td>2.0.0</td>
+        <td></td>
         <td>https://github.com/espressif/arduino-esp32.git</td>
         <td>True</td>
     </tr>
@@ -347,8 +284,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.5<br />
 <b>Board:</b> WEMOS D1 MINI ESP32<br />
 <br />
-<b>Program storage space:</b> 759037 bytes<br />
-<b>Dynamic memory:</b> 71528 bytes<br />
+<b>Program storage space:</b> 768329 bytes<br />
+<b>Dynamic memory:</b> 71576 bytes<br />
 <br />
 <b>Flash Frequency:</b> 80MHz<br />
 <b>Partition Scheme:</b> No OTA (Large APP)<br />
@@ -367,10 +304,17 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
+    </tr>
+    <tr>
+        <td>Wire</td>
+        <td>2.0.0</td>
+        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
     </tr>
     <tr>
         <td>WiFi</td>
@@ -380,9 +324,23 @@ Below you will find a list of build which can be configured and should compile w
         <td>True</td>
     </tr>
     <tr>
-        <td>Wire</td>
+        <td>FS</td>
         <td>2.0.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>2.0.0</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>SD_MMC</td>
+        <td>2.0.0</td>
+        <td></td>
         <td>https://github.com/espressif/arduino-esp32.git</td>
         <td>True</td>
     </tr>
@@ -419,8 +377,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.0<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 719741 bytes<br />
-<b>Dynamic memory:</b> 71988 bytes<br />
+<b>Program storage space:</b> 728593 bytes<br />
+<b>Dynamic memory:</b> 72068 bytes<br />
 <br />
 <b>PSRAM:</b> Disabled<br />
 <b>Partition Scheme:</b> No OTA (2MB APP/2MB SPIFFS)<br />
@@ -444,10 +402,17 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
+    </tr>
+    <tr>
+        <td>Wire</td>
+        <td>2.0.0</td>
+        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td></td>
+        <td>True</td>
     </tr>
     <tr>
         <td>WiFi</td>
@@ -457,9 +422,23 @@ Below you will find a list of build which can be configured and should compile w
         <td>True</td>
     </tr>
     <tr>
-        <td>Wire</td>
+        <td>FS</td>
         <td>2.0.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td></td>
+        <td></td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>2.0.0</td>
+        <td></td>
+        <td></td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>SD_MMC</td>
+        <td>2.0.0</td>
+        <td></td>
         <td></td>
         <td>True</td>
     </tr>
@@ -496,8 +475,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.7<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 785125 bytes<br />
-<b>Dynamic memory:</b> 76724 bytes<br />
+<b>Program storage space:</b> 795085 bytes<br />
+<b>Dynamic memory:</b> 76772 bytes<br />
 <br />
 <b>JTAG Adapter:</b> Disabled<br />
 <b>PSRAM:</b> Disabled<br />
@@ -523,10 +502,17 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
+    </tr>
+    <tr>
+        <td>Wire</td>
+        <td>2.0.0</td>
+        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
     </tr>
     <tr>
         <td>WiFi</td>
@@ -536,9 +522,23 @@ Below you will find a list of build which can be configured and should compile w
         <td>True</td>
     </tr>
     <tr>
-        <td>Wire</td>
+        <td>FS</td>
         <td>2.0.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>2.0.0</td>
+        <td></td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>SD_MMC</td>
+        <td>2.0.0</td>
+        <td></td>
         <td>https://github.com/espressif/arduino-esp32.git</td>
         <td>True</td>
     </tr>
@@ -575,8 +575,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 3.2.0<br />
 <b>Board:</b> Generic RP2040<br />
 <br />
-<b>Program storage space:</b> 80884 bytes<br />
-<b>Dynamic memory:</b> 38380 bytes<br />
+<b>Program storage space:</b> 121524 bytes<br />
+<b>Dynamic memory:</b> 38720 bytes<br />
 <br />
 <b>Flash Size:</b> 2MB (no FS)<br />
 <b>CPU Speed:</b> 133 MHz<br />
@@ -602,7 +602,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -617,6 +617,13 @@ Below you will find a list of build which can be configured and should compile w
     <tr>
         <td>AudioBufferManager</td>
         <td>1.0.0</td>
+        <td>https://github.com/earlephilhower/arduino-pico</td>
+        <td></td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>0.1.0</td>
         <td>https://github.com/earlephilhower/arduino-pico</td>
         <td></td>
         <td>True</td>
@@ -640,8 +647,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 3.2.0<br />
 <b>Board:</b> Raspberry Pi Pico<br />
 <br />
-<b>Program storage space:</b> 80892 bytes<br />
-<b>Dynamic memory:</b> 38380 bytes<br />
+<b>Program storage space:</b> 121532 bytes<br />
+<b>Dynamic memory:</b> 38720 bytes<br />
 <br />
 <b>Flash Size:</b> 2MB (no FS)<br />
 <b>CPU Speed:</b> 133 MHz<br />
@@ -666,7 +673,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -681,6 +688,13 @@ Below you will find a list of build which can be configured and should compile w
     <tr>
         <td>AudioBufferManager</td>
         <td>1.0.0</td>
+        <td>https://github.com/earlephilhower/arduino-pico</td>
+        <td></td>
+        <td>True</td>
+    </tr>
+    <tr>
+        <td>LittleFS</td>
+        <td>0.1.0</td>
         <td>https://github.com/earlephilhower/arduino-pico</td>
         <td></td>
         <td>True</td>
@@ -704,8 +718,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 1.8.5<br />
 <b>Board:</b> Teensy 4.1<br />
 <br />
-<b>Flash:</b> code: 77380 bytes, data: 32452 bytes, headers: 8948 bytes<br />
-<b>RAM1:</b> variables: 54208 bytes, data: 74392 bytes, headers: 23912 bytes<br />
+<b>Flash:</b> code: 72672 bytes, data: 29348 bytes, headers: 8568 bytes<br />
+<b>RAM1:</b> variables: 50112 bytes, data: 69688 bytes, headers: 28616 bytes<br />
 <b>RAM2:</b> variables: 19744 bytes<br />
 <br />
 <b>USB Type:</b> Serial + MIDI + Audio<br />
@@ -752,7 +766,7 @@ Below you will find a list of build which can be configured and should compile w
     </tr>
     <tr>
         <td>ML SynthTools</td>
-        <td>1.1.0</td>
+        <td>1.3.1</td>
         <td>https://github.com/marcel-licence/ML_SynthTools</td>
         <td>https://github.com/marcel-licence/ML_SynthTools.git</td>
         <td>False</td>
@@ -763,26 +777,5 @@ Below you will find a list of build which can be configured and should compile w
         <td>http://www.arduino.cc/en/Reference/Wire</td>
         <td></td>
         <td>True</td>
-    </tr>
-    <tr>
-        <td>Adafruit GFX Library</td>
-        <td>1.11.5</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>https://github.com/adafruit/Adafruit-GFX-Library</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>Adafruit BusIO</td>
-        <td>1.14.1</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>https://github.com/adafruit/Adafruit_BusIO</td>
-        <td>False</td>
-    </tr>
-    <tr>
-        <td>Adafruit SSD1306</td>
-        <td>2.5.7</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>https://github.com/adafruit/Adafruit_SSD1306</td>
-        <td>False</td>
     </tr>
 </table>
