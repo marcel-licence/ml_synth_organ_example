@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         fqbn:
-          - rp2040:rp2040:rpipico2
+          - esp32:esp32:esp32
 
     steps:
       # This step makes the contents of the repository available to the workflow
@@ -26,6 +26,9 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           fqbn: ${{ matrix.fqbn }}
+          platforms: |
+            - name: esp32:esp32
+              source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
           # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
           sketch-paths: |
             # Configure the action to search all folders under the root of the repository for sketches and compile them.
