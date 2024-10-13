@@ -46,6 +46,9 @@ jobs:
               - source-url: https://github.com/adafruit/Adafruit_SSD1306.git
                 name: Adafruit_SSD1306
                 version: 2.4.5
+              - source-url: https://github.com/adafruit/Adafruit_BusIO.git
+                name: Adafruit BusIO
+                version: 1.14.1
 
   build_rp2040:
 
