@@ -38,3 +38,5 @@ jobs:
             # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
               - source-url: https://github.com/marcel-licence/ML_SynthTools.git
                 name: ML_SynthTools
+              - source-url: https://github.com/adafruit/Adafruit-GFX-Library
+                name: Adafruit_GFX_Library
