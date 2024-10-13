@@ -43,3 +43,6 @@ jobs:
               - source-url: https://github.com/adafruit/Adafruit-GFX-Library.git
                 name: Adafruit_GFX_Library
                 version: 1.10.10
+              - source-url: https://github.com/adafruit/Adafruit_SSD1306.git
+                name: Adafruit_SSD1306
+                version: 2.4.5
