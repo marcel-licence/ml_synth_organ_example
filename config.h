@@ -56,6 +56,14 @@
 
 //#define USE_ML_SYNTH_PRO
 
+
+#define MIDI_RECV_FROM_SERIAL
+#define SERIAL_BAUDRATE 115200
+#define MIDI_SERIAL_BAUDRATE SERIAL_BAUDRATE
+
+#define STATUS_SIMPLE
+
+
 //#define AUDIO_PASS_THROUGH
 
 
@@ -215,15 +223,13 @@ SoftwareSerial Serial2(RXD2, TXD2);
  *
  * Pinout @see https://www.raspberrypi-spy.co.uk/2021/01/pi-pico-pinout-and-power-pins/#prettyPhoto
  */
-#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
-
+#ifdef ARDUINO_ARCH_RP2040
+#ifndef __ARM_FEATURE_DSP
 #ifdef ARDUINO_RASPBERRY_PI_PICO
 #define BLINK_LED_PIN LED_BUILTIN
 #else
 #define BLINK_LED_PIN 19
 #endif
-#define SAMPLE_BUFFER_SIZE  48
-#define SAMPLE_RATE  48000
 
 #define MIDI_RX2_PIN    5
 #define MIDI_PORT2_ACTIVE
@@ -232,7 +238,26 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define RP2040_AUDIO_PWM
 
-#endif /* ARDUINO_RASPBERRY_PI_PICO, ARDUINO_GENERIC_RP2040 */
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  48000
+
+#endif /* __ARM_FEATURE_DSP */
+#endif /* ARDUINO_ARCH_RP2040 */
+
+#ifdef ARDUINO_ARCH_RP2040
+#ifdef __ARM_FEATURE_DSP
+#define MIDI_STREAM_PLAYER_ENABLED /* playback MIDI files from LittleFS */
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  48000
+#define PICO_AUDIO_I2S
+#define PICO_AUDIO_I2S_DATA_PIN 26
+#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
+#define MIDI_RX1_PIN    13
+#define MIDI_TX1_PIN    12
+//#define USE_ML_SYNTH_PRO /* needs the pro library */
+#define BLINK_LED_PIN PICO_DEFAULT_LED_PIN
+#endif
+#endif
 
 /*
  * Configuration for
