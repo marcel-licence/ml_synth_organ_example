@@ -173,11 +173,12 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef TEENSYDUINO // CORE_TEENSY
 
-#define LED_PIN 13 /* led pin on teensy 4.1 */
+#define BLINK_LED_PIN 13 /* led pin on teensy 4.1 */
 #define MIDI_PORT1_ACTIVE
 #define MIDI_SERIAL1_BAUDRATE   31250
 #define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
 #define SAMPLE_RATE AUDIO_SAMPLE_RATE
+#define VOLUME_CONTROL_ENABLED
 
 #endif /* TEENSYDUINO */
 

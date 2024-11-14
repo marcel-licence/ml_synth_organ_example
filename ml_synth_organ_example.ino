@@ -65,6 +65,7 @@
 #endif
 
 #include <ml_types.h>
+#include <ml_utils.h>
 
 
 #define ML_SYNTH_INLINE_DECLARATION
@@ -78,6 +79,12 @@
 
 
 char shortName[] = "ML_Organ";
+
+
+#ifdef VOLUME_CONTROL_ENABLED
+float mainVolume = 1.0f;
+float mainVolumeSet = 1.0f;
+#endif
 
 
 void setup()
@@ -199,8 +206,8 @@ void setup()
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
     OrganPro_SetLeslCtrl(127);
-#ifndef SOC_CPU_HAS_FPU
-    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)");
+#if !defined(SOC_CPU_HAS_FPU) && !defined(TEENSYDUINO)
+    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)\n");
 #endif
 #else
     Organ_NoteOn(0, 60, 127);
@@ -341,6 +348,21 @@ void loop()
     float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
     OrganPro_Process_fl(mono, SAMPLE_BUFFER_SIZE);
 
+    /* reduce output to avoid clipping */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] *= 0.125f;
+    }
+
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+    }
+#endif
+
 #ifdef INPUT_TO_MIX
     Audio_Input(left, right);
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
@@ -382,6 +404,18 @@ void loop()
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
+
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        float mono_f = mono[i];
+        mono_f *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+        mono[i] = mono_f;
+    }
+#endif
+
 #ifdef REVERB_ENABLED
     float mono_f[SAMPLE_BUFFER_SIZE];
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
@@ -414,6 +448,14 @@ void App_UsbMidiShortMsgReceived(uint8_t *msg)
 /*
  * MIDI callbacks
  */
+inline void App_MainVolume(uint8_t setting, uint8_t value)
+{
+#ifdef VOLUME_CONTROL_ENABLED
+    mainVolumeSet = log10fromU7(value, -2, 0);
+    Status_ValueChangedFloat("Main Volume", mainVolumeSet);
+#endif
+}
+
 inline void Organ_PercSetMidi(uint8_t setting, uint8_t value)
 {
     if (value > 0)
