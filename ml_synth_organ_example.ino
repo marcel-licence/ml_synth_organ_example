@@ -64,6 +64,12 @@
 #include <ml_scope.h>
 #endif
 
+#include <ml_lfo.h>
+#ifdef VIBRATO_ENABLED
+#include <ml_vibrato.h>
+extern void ML_VibratoHQ_Init(void);
+#endif
+
 #include <ml_types.h>
 #include <ml_utils.h>
 
@@ -84,6 +90,16 @@ char shortName[] = "ML_Organ";
 #ifdef VOLUME_CONTROL_ENABLED
 float mainVolume = 1.0f;
 float mainVolumeSet = 1.0f;
+#endif
+
+
+float lfo1_max = 1.0f;
+float lfo1_buffer[SAMPLE_BUFFER_SIZE];
+float lfo1_buffer_scale[SAMPLE_BUFFER_SIZE];
+ML_LFO lfo1(SAMPLE_RATE, lfo1_buffer, SAMPLE_BUFFER_SIZE);
+
+#ifdef VIBRATO_ENABLED
+ML_Vibrato vibrato(SAMPLE_RATE);
 #endif
 
 
@@ -180,6 +196,13 @@ void setup()
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
 #endif
+
+#ifdef VIBRATO_ENABLED
+    ML_VibratoHQ_Init();
+#endif
+
+    lfo1.setPhase(0);
+
 
 #ifdef MIDI_BLE_ENABLED
     midi_ble_setup();
@@ -363,6 +386,15 @@ void loop()
     }
 #endif
 
+    lfo1.Process(SAMPLE_BUFFER_SIZE);
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        lfo1_buffer_scale[i] = lfo1_buffer[i] * lfo1_max;
+    }
+#ifdef VIBRATO_ENABLED
+    vibrato.ProcessHQ(mono, lfo1_buffer_scale, mono, SAMPLE_BUFFER_SIZE);
+#endif
+
 #ifdef INPUT_TO_MIX
     Audio_Input(left, right);
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
@@ -448,12 +480,30 @@ void App_UsbMidiShortMsgReceived(uint8_t *msg)
 /*
  * MIDI callbacks
  */
-inline void App_MainVolume(uint8_t setting, uint8_t value)
+inline void App_MainVolume(uint8_t unused __attribute__((unused)), uint8_t value)
 {
 #ifdef VOLUME_CONTROL_ENABLED
     mainVolumeSet = log10fromU7(value, -2, 0);
     Status_ValueChangedFloat("Main Volume", mainVolumeSet);
 #endif
+}
+
+void Lfo1_SetSpeed(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+    float f = log10fromU7(value, -2, 3);
+    lfo1.setFrequency(f);
+}
+
+void Lfo1_SetDepth(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+    if (value > 0)
+    {
+        lfo1_max = log2fromU7(value, -6, 0);
+    }
+    else
+    {
+        lfo1_max = 0;
+    }
 }
 
 inline void Organ_PercSetMidi(uint8_t setting, uint8_t value)
