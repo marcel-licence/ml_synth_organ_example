@@ -69,6 +69,7 @@
 
 /* use the following to test the output / codec */
 //#define OUTPUT_SAW_TEST
+//#define OUTPUT_SINE_TEST
 
 #ifdef TEENSYDUINO
 #include <Audio.h> /* required to access teensy audio defines */
@@ -238,7 +239,13 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define MIDI_USB_ENABLED /* connect RP2040 as a USB device */
 
+äif 1
 #define RP2040_AUDIO_PWM
+#else
+#define PICO_AUDIO_I2S
+#define PICO_AUDIO_I2S_DATA_PIN 26
+#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
+#endif
 
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  48000
@@ -257,7 +264,9 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define MIDI_RX1_PIN    13
 #define MIDI_TX1_PIN    12
 //#define USE_ML_SYNTH_PRO /* needs the pro library */
+#ifdef PICO_DEFAULT_LED_PIN
 #define BLINK_LED_PIN PICO_DEFAULT_LED_PIN
+#endif
 #endif
 #endif
 
