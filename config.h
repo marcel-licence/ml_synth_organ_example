@@ -239,7 +239,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define MIDI_USB_ENABLED /* connect RP2040 as a USB device */
 
-äif 1
+#if 1
 #define RP2040_AUDIO_PWM
 #else
 #define PICO_AUDIO_I2S
