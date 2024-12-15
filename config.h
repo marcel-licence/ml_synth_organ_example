@@ -270,6 +270,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define BLINK_LED_PIN LED_BUILTIN
 #endif
 #endif
+#endif
 
 /*
  * Configuration for
