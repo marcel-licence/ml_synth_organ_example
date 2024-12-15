@@ -264,9 +264,10 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define MIDI_RX1_PIN    13
 #define MIDI_TX1_PIN    12
 //#define USE_ML_SYNTH_PRO /* needs the pro library */
-#ifdef PICO_DEFAULT_LED_PIN
+#if defined(PICO_DEFAULT_LED_PIN)
 #define BLINK_LED_PIN PICO_DEFAULT_LED_PIN
-#endif
+#elif defined(LED_BUILTIN)
+#define BLINK_LED_PIN LED_BUILTIN
 #endif
 #endif
 
