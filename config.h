@@ -27,7 +27,7 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <https://www.gnu.org/licenses/>.
  */
-
+/* trigger build */
 /**
  * @file config.h
  * @author Marcel Licence
