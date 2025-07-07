@@ -393,6 +393,10 @@ void loop()
     {
         lfo1_buffer_scale[i] = lfo1_buffer[i] * lfo1_max;
     }
+
+    Lfo1_SetDepth(0, 32);
+    Lfo1_SetSpeed(0, 71);
+
 #ifdef VIBRATO_ENABLED
     vibrato.ProcessHQ(mono, lfo1_buffer_scale, mono, SAMPLE_BUFFER_SIZE);
 #endif
