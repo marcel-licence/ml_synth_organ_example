@@ -67,7 +67,6 @@
 #include <ml_lfo.h>
 #ifdef VIBRATO_ENABLED
 #include <ml_vibrato.h>
-extern void ML_VibratoHQ_Init(void);
 #endif
 
 #include <ml_types.h>
@@ -108,8 +107,12 @@ void setup()
     /*
      * this code runs once
      */
+#ifdef ML_BOARD_SETUP
+    Board_Setup();
+#else
 #ifdef MIDI_USB_ENABLED
     Midi_Usb_Setup();
+#endif
 #endif
 
 #ifdef BLINK_LED_PIN
@@ -139,11 +142,14 @@ void setup()
 
 #ifdef ESP32
 #ifdef USE_ML_SYNTH_PRO
+#if 0 /* future use */
     char user[] = "";
     System_PrintInfo(user);
 #endif
 #endif
+#endif
 
+#ifndef ML_BOARD_SETUP
 #ifdef ESP8266
     Midi_Setup();
 #endif
@@ -167,7 +173,7 @@ void setup()
 #endif
 
 #endif
-
+#endif /* #ifndef ML_BOARD_SETUP */
 
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_Setup(SAMPLE_RATE);
@@ -195,10 +201,6 @@ void setup()
     static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
-#endif
-
-#ifdef VIBRATO_ENABLED
-    ML_VibratoHQ_Init();
 #endif
 
     lfo1.setPhase(0);

@@ -139,8 +139,8 @@ struct midiControllerMapping edirolMapping[] =
 #endif
 #endif
     { 0x5, 0x10, "R6", NULL, Organ_SetCtrl, 5},
-    { 0x6, 0x10, "R7", NULL, Organ_SetCtrl, 6},
-    { 0x7, 0x10, "R8", NULL, Organ_SetCtrl, 7},
+    { 0x6, 0x10, "R7", NULL, Lfo1_SetDepth, 6},
+    { 0x7, 0x10, "R8", NULL, Lfo1_SetSpeed, 7},
 
     { 0x0, 0x12, "R9", NULL, Reverb_SetLevelInt, 8},
 
