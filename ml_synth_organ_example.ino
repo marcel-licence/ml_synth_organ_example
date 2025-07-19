@@ -53,6 +53,7 @@
  */
 #ifdef USE_ML_SYNTH_PRO
 #include <ml_organ_pro.h>
+#include <ml_system.h>
 #else
 #include <ml_organ.h>
 #endif
@@ -142,10 +143,8 @@ void setup()
 
 #ifdef ESP32
 #ifdef USE_ML_SYNTH_PRO
-#if 0 /* future use */
     char user[] = "";
     System_PrintInfo(user);
-#endif
 #endif
 #endif
 
