@@ -51,6 +51,7 @@
 /*
  * Library can be found on https://github.com/marcel-licence/ML_SynthTools
  */
+#include <caps_info.h>
 #ifdef USE_ML_SYNTH_PRO
 #include <ml_organ_pro.h>
 #include <ml_system.h>
@@ -108,6 +109,9 @@ void setup()
     /*
      * this code runs once
      */
+
+    CapsPrintInfo();
+
 #ifdef ML_BOARD_SETUP
     Board_Setup();
 #else
@@ -175,6 +179,9 @@ void setup()
 #endif /* #ifndef ML_BOARD_SETUP */
 
 #ifdef USE_ML_SYNTH_PRO
+#if !defined(SOC_CPU_HAS_FPU) && !defined(TEENSYDUINO) && !defined(__ARM_FEATURE_DSP)
+    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)\n");
+#endif
     OrganPro_Setup(SAMPLE_RATE);
 #else
     Organ_Setup(SAMPLE_RATE);
@@ -230,9 +237,6 @@ void setup()
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
     OrganPro_SetLeslCtrl(127);
-#if !defined(SOC_CPU_HAS_FPU) && !defined(TEENSYDUINO)
-    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)\n");
-#endif
 #else
     Organ_NoteOn(0, 60, 127);
     Organ_SetLeslCtrl(127);
@@ -265,13 +269,13 @@ void setup()
 TaskHandle_t Core0TaskHnd;
 
 inline
-void Core0TaskInit()
+void Core0TaskInit(void)
 {
     /* we need a second task for the terminal output */
     xTaskCreatePinnedToCore(Core0Task, "CoreTask0", 8000, NULL, 999, &Core0TaskHnd, 0);
 }
 
-void Core0TaskSetup()
+void Core0TaskSetup(void)
 {
     /*
      * init your stuff for core0 here
@@ -285,7 +289,7 @@ void Core0TaskSetup()
 #endif
 }
 
-void Core0TaskLoop()
+void Core0TaskLoop(void)
 {
     /*
      * put your loop stuff for core0 here
@@ -314,7 +318,7 @@ void Core0Task(void *parameter)
 }
 #endif /* ESP32 */
 
-void loop_1Hz()
+void loop_1Hz(void)
 {
 #ifdef CYCLE_MODULE_ENABLED
     CyclePrint();
@@ -465,6 +469,15 @@ void loop()
         mono[i] = mono_f[i];
     }
 #endif
+
+#ifdef PICO_AUDIO_I2S
+    /* we expect 32 bit audio and the buffer used only 16 results in no sounds */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] <<= 16;
+    }
+#endif
+
     Audio_OutputMono(mono);
 #endif
 }
