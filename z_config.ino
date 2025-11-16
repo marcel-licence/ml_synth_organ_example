@@ -127,18 +127,18 @@ struct midiControllerMapping edirolMapping[] =
 #endif
     { 0x1, 0x10, "R2", NULL, Organ_SetCtrl, 1},
     { 0x2, 0x10, "R3", NULL, Organ_SetCtrl, 2},
-#if 1
+#if 0
     { 0x3, 0x10, "R4", NULL, Organ_SetCtrl, 3},
-
     { 0x4, 0x10, "R5", NULL, Organ_SetCtrl, 4},
+    { 0x5, 0x10, "R6", NULL, Organ_SetCtrl, 5},
 #else
 #ifdef MAX_DELAY
     { 0x3, 0x10, "R4", NULL, Delay_SetOutputLevelInt, 3},
 
     { 0x4, 0x10, "R5", NULL, Delay_SetFeedbackInt, 4},
+    { 0x5, 0x10, "R6", NULL, Delay_SetLength, 5},
 #endif
 #endif
-    { 0x5, 0x10, "R6", NULL, Organ_SetCtrl, 5},
     { 0x6, 0x10, "R7", NULL, Lfo1_SetDepth, 6},
     { 0x7, 0x10, "R8", NULL, Lfo1_SetSpeed, 7},
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Marcel Licence
+ * Copyright (c) 2025 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ESP32
 
-#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
+#define BOARD_ML_SYNTH_V2 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
 //#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
 //#define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
@@ -118,6 +118,10 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN     BLINK_LED_PIN
 
 #define REVERB_ENABLED /* add simple reverb */
+
+#ifdef USE_ML_SYNTH_PRO
+#define VIBRATO_ENABLED /* uses lfo1 with the organ pro to add some vibrato to the sound */
+#endif
 
 #define MAX_DELAY   (SAMPLE_RATE/4)
 

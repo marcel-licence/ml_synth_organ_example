@@ -95,6 +95,7 @@ float mainVolumeSet = 1.0f;
 
 
 float lfo1_max = 1.0f;
+float lfo1_max_soft = 1.0f;
 float lfo1_buffer[SAMPLE_BUFFER_SIZE];
 float lfo1_buffer_scale[SAMPLE_BUFFER_SIZE];
 ML_LFO lfo1(SAMPLE_RATE, lfo1_buffer, SAMPLE_BUFFER_SIZE);
@@ -207,6 +208,10 @@ void setup()
     static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
+
+    Delay_SetLength(0, 0.5f);
+    Delay_SetOutputLevel(0, 0.0f);
+    Delay_SetFeedback(0, 0.02f);
 #endif
 
     lfo1.setPhase(0);
@@ -243,6 +248,15 @@ void setup()
     Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
     Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
 #endif
+#endif
+
+#ifdef VIBRATO_ENABLED
+#if 0
+    Lfo1_SetDepth(0, 32);
+#else
+    Lfo1_SetDepth(0, 0);
+#endif
+    Lfo1_SetSpeed(0, 71);
 #endif
 
 #ifdef MIDI_STREAM_PLAYER_ENABLED
@@ -394,11 +408,9 @@ void loop()
     lfo1.Process(SAMPLE_BUFFER_SIZE);
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
-        lfo1_buffer_scale[i] = lfo1_buffer[i] * lfo1_max;
+        lfo1_max_soft = lfo1_max * 0.01 + lfo1_max_soft * 0.99;
+        lfo1_buffer_scale[i] = lfo1_buffer[i] * lfo1_max_soft;
     }
-
-    Lfo1_SetDepth(0, 32);
-    Lfo1_SetSpeed(0, 71);
 
 #ifdef VIBRATO_ENABLED
     vibrato.ProcessHQ(mono, lfo1_buffer_scale, mono, SAMPLE_BUFFER_SIZE);
