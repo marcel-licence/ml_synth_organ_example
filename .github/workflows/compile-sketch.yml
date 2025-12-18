@@ -50,6 +50,14 @@ jobs:
                 name: Adafruit BusIO
                 version: 1.14.1
 
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rp2040-${{ matrix.fqbn }}
+          path: |
+            sketch/build/**/*.uf2
+            sketch/build/**/*.bin
+            sketch/build/**/*.hex
 
   build_esp8266:
 
@@ -95,6 +103,15 @@ jobs:
               - source-url: https://github.com/marcel-licence/AC101.git
                 name: AC101
 
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rp2040-${{ matrix.fqbn }}
+          path: |
+            sketch/build/**/*.uf2
+            sketch/build/**/*.bin
+            sketch/build/**/*.hex
+
   build_rp2040:
 
     if: true
@@ -133,13 +150,12 @@ jobs:
                 name: MIDI_Library
                 version: 5.0.2
 
-      - name: 'upload artifact'
-        id: upload-artifact
-        uses: actions/upload-artifact@v6
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: rp2040
+          name: rp2040-${{ matrix.fqbn }}
           path: |
-            **/*.uf2
-            **/*.bin
-            **/*.hex
+            sketch/build/**/*.uf2
+            sketch/build/**/*.bin
+            sketch/build/**/*.hex
               
