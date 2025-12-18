@@ -29,6 +29,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           fqbn: ${{ matrix.fqbn }}
+          build-path: sketch/build
           platforms: |
             - name: esp32:esp32
               source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
@@ -80,6 +81,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           fqbn: ${{ matrix.fqbn }}
+          build-path: sketch/build
           platforms: |
             - name: esp8266:esp8266
               source-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
@@ -133,6 +135,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           fqbn: ${{ matrix.fqbn }}
+          build-path: sketch/build
           cli-compile-flags: |
             - --build-property
             - "build.usbstack_flags=-DUSE_TINYUSB -I{runtime.platform.path}/libraries/Adafruit_TinyUSB_Arduino/src/arduino"
