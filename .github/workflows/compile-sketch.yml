@@ -140,4 +140,6 @@ jobs:
           name: rp2040
           path: |
             **/*.uf2
+            **/*.bin
+            **/*.hex
               
