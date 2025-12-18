@@ -51,6 +51,11 @@ jobs:
                 name: Adafruit BusIO
                 version: 1.14.1
 
+      - name: Collect firmware
+        run: |
+          mkdir -p artifacts
+          find ~/.cache/arduino/sketches -type f \( -name "*.uf2" -o -name "*.bin" -o -name "*.hex" \) -exec cp {} artifacts/ \;
+
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
@@ -104,6 +109,11 @@ jobs:
               - source-url: https://github.com/marcel-licence/AC101.git
                 name: AC101
 
+      - name: Collect firmware
+        run: |
+          mkdir -p artifacts
+          find ~/.cache/arduino/sketches -type f \( -name "*.uf2" -o -name "*.bin" -o -name "*.hex" \) -exec cp {} artifacts/ \;
+
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
@@ -151,6 +161,11 @@ jobs:
               - source-url: https://github.com/FortySevenEffects/arduino_midi_library.git
                 name: MIDI_Library
                 version: 5.0.2
+
+      - name: Collect firmware
+        run: |
+          mkdir -p artifacts
+          find ~/.cache/arduino/sketches -type f \( -name "*.uf2" -o -name "*.bin" -o -name "*.hex" \) -exec cp {} artifacts/ \;
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
