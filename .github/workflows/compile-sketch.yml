@@ -35,7 +35,7 @@ jobs:
               source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
               version: 2.0.13
           sketch-paths: |
-            - sketch/build
+            - ./
           libraries: |
               - source-url: https://github.com/marcel-licence/ML_SynthTools.git
                 name: ML_SynthTools
@@ -134,6 +134,7 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           fqbn: ${{ matrix.fqbn }}
+          verbose: true
           cli-compile-flags: |
             - --build-property
             - "build.usbstack_flags=-DUSE_TINYUSB -I{runtime.platform.path}/libraries/Adafruit_TinyUSB_Arduino/src/arduino"
