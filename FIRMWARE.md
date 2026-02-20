@@ -32,3 +32,11 @@
 **DE:** Die Nutzung dieser Firmware erfolgt **auf eigene Gefahr**. Der Autor haftet nicht für jegliche Schäden an Hardware, Software oder anderen Geräten, die durch die Verwendung dieser Dateien entstehen könnten.
 
 **EN:** Use this firmware **at your own risk**. The author is not liable for any damage to hardware, software, or other equipment resulting from the use of these files.
+
+
+## 🛠 Build Status & Downloads
+
+| Board | Build Status | Stable Release | Nightly Build (Unstable) |
+| :--- | :--- | :--- | :--- |
+| **Seeeduino XIAO** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](https://nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-ci/main/firmware-xiao_samd21.zip) |
+| **Raspberry Pi Pico** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](https://nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-ci/main/firmware-pico_rp2040.zip) |

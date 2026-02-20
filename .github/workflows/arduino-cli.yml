@@ -27,7 +27,7 @@ jobs:
           - name: "Raspberry Pi Pico"
             fname: "pico_rp2040"
             fqbn: "rp2040:rp2040:rpipico"
-            family: "RP2xxx"
+            family: "rp2040"
             arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
@@ -36,7 +36,7 @@ jobs:
           - name: "Raspberry Pi Pico 2"
             fname: "pico2_rp2350"
             fqbn: "rp2040:rp2040:rpipico2"
-            family: "RP2xxx"
+            family: "rp2350-arm-s --abs-block"
             arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
@@ -45,7 +45,7 @@ jobs:
           - name: "Pimoroni PicoPlus2"
             fname: "pimoroni_pico_plus2"
             fqbn: "rp2040:rp2040:pimoroni_pico_plus_2"
-            family: "RP2xxx"
+            family: "rp2350-arm-s --abs-block"
             arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
@@ -101,14 +101,14 @@ jobs:
         python3 uf2conv.py "$BIN_FILE" --family ${{ matrix.board.family }} --convert --output build/firmware.uf2
 
     - name: Rename UF2 (RP2xxx)
-      if: matrix.board.family == 'RP2xxx'
+      if: contains(matrix.board.family, 'rp2')
       run: mv build/*.uf2 build/firmware.uf2 || true
 
     - name: Upload firmware
       uses: actions/upload-artifact@v4
       with:
         name: firmware-${{ matrix.board.fname }}
-        path: build/firmware.uf2
+        path: build/*
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
