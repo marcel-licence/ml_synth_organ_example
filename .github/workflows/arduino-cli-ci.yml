@@ -52,7 +52,7 @@ jobs:
             extra_libs: "'MIDI Library@5.0.2'"
             options: "usbstack=tinyusb"
         exclude:
-          - board: { name: "Rapberry Pi Pico 2" }
+          - board: { name: "Raspberry Pi Pico 2" }
           - board: { name: "Pimoroni PicoPlus2" }
 
     steps:
