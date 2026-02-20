@@ -51,10 +51,6 @@ jobs:
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: ""
-        exclude:
-          - board: { name: "Raspberry Pi Pico" }
-          - board: { name: "Raspberry Pi Pico 2" }
-          - board: { name: "Pimoroni PicoPlus2" }
 
     steps:
     - uses: actions/checkout@v4
