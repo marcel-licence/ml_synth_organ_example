@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.board.family }} | ${{ matrix.board.name }}
+    name: Build ${{ matrix.board.family }} / ${{ matrix.board.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -23,7 +23,7 @@ jobs:
             urls: "https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json"
             extra_libs: ""
             options: ""
-          - name: "Rapberry Pi Pico 2"
+          - name: "Rapberry Pi Pico"
             fname: "pico_rp2040"
             fqbn: "rp2040:rp2040:rpipico"
             family: "Raspberry Pi Pico/RP2040/RP2350"
@@ -47,7 +47,13 @@ jobs:
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: ""
-
+        exclude:
+          - board:
+              name: "Rapberry Pi Pico 2"
+          - bord:
+              name: "Rapberry Pi Pico 2"
+          - bord:
+              name: "Pimoroni PicoPlus2"
     steps:
     - uses: actions/checkout@v4
     
