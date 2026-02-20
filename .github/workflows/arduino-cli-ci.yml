@@ -41,7 +41,7 @@ jobs:
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
-            options: ""
+            options: "usbstack=tinyusb"
           - name: "Pimoroni PicoPlus2"
             fname: "pimoroni_pico_plus2"
             fqbn: "rp2040:rp2040:pimoroni_pico_plus_2"
@@ -50,10 +50,7 @@ jobs:
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
-            options: ""
-        exclude:
-          - board: { name: "Raspberry Pi Pico 2" }
-          - board: { name: "Pimoroni PicoPlus2" }
+            options: "usbstack=tinyusb"
 
     steps:
     - uses: actions/checkout@v4
@@ -120,10 +117,3 @@ jobs:
         files: build/firmware.uf2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Summary
-      if: always()
-      run: |
-        echo "### Build Summary: ${{ matrix.board.name }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Artifact:** firmware-${{ matrix.board.fname }}" >> $GITHUB_STEP_SUMMARY
