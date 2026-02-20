@@ -50,9 +50,9 @@ jobs:
         exclude:
           - board:
               name: "Rapberry Pi Pico 2"
-          - bord:
+          - board:
               name: "Rapberry Pi Pico 2"
-          - bord:
+          - board:
               name: "Pimoroni PicoPlus2"
     steps:
     - uses: actions/checkout@v4
