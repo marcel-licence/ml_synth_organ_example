@@ -2,7 +2,7 @@
 
 ### 📥 1. Download Firmware
 * **[Latest Stable Release](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest)**: Recommended for most users.
-* **[Unstable/Nightly Builds](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-cli.yml)**: The very latest version from the code (Select a run -> scroll to Artifacts).
+* **[Unstable/Nightly Builds](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-cli-ci.yml)**: The very latest version from the code (Select a run -> scroll to Artifacts).
 
 ### 🛠 2. How to Flash
 1. **Connect** your board via USB.
@@ -38,5 +38,5 @@
 
 | Board | Build Status | Stable Release | Nightly Build (Unstable) |
 | :--- | :--- | :--- | :--- |
-| **Seeeduino XIAO** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](https://nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-ci/main/firmware-xiao_samd21.zip) |
-| **Raspberry Pi Pico** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](https://nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-ci/main/firmware-pico_rp2040.zip) |
+| **Seeeduino XIAO** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-cli-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](https://nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-cli-ci/main/firmware-xiao_samd21.zip) |
+| **Raspberry Pi Pico** | ![CI](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-cli-ci.yml/badge.svg) | [📦 Download](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest) | [🧪 firmware.zip](nightly.link/marcel-licence/ml_synth_organ_example/workflows/arduino-cli-ci/main/firmware-pico_rp2040.zip) |
