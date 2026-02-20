@@ -9,35 +9,43 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.board.name }}
+    name: Build ${{ matrix.board.family }} | ${{ matrix.board.name }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         board:
-          - name: "xiao_samd21"
+          - name: "Seeeduino XIAO"
+            fname: "xiao_samd21"
             fqbn: "Seeeduino:samd:seeed_XIAO_m0"
-            family: "SAMD21"
+            family: "Seeed SAMD Boards"
             core: "Seeeduino:samd@1.8.5"
             urls: "https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json"
             extra_libs: ""
-          - name: "pico_rp2040"
+            options: ""
+          - name: "Rapberry Pi Pico 2"
+            fname: "pico_rp2040"
             fqbn: "rp2040:rp2040:rpipico"
-            family: "RP2040"
+            family: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
-          - name: "pico2_rp2350"
+            options: "usbstack=tinyusb"
+          - name: "Rapberry Pi Pico 2"
+            fname: "pico2_rp2350"
             fqbn: "rp2040:rp2040:rpipico2"
-            family: "RP2350"
+            family: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
-          - name: "pimoroni_pico_plus"
-            fqbn: "rp2040:rp2040:pimoronipicoplus"
-            family: "RP2040"
+            options: ""
+          - name: "Pimoroni PicoPlus2"
+            fname: "pimoroni_pico_plus2"
+            fqbn: "rp2040:rp2040:pimoroni_pico_plus_2"
+            family: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
+            options: ""
 
     steps:
     - uses: actions/checkout@v4
@@ -69,10 +77,16 @@ jobs:
 
     - name: Compile sketch
       run: |
+        # Combine FQBN and options if options exist
+        FULL_FQBN="${{ matrix.board.fqbn }}"
+        if [ ! -z "${{ matrix.board.options }}" ]; then
+          FULL_FQBN="${FULL_FQBN}:${{ matrix.board.options }}"
+        fi
+        
         arduino-cli compile \
-          --fqbn ${{ matrix.board.fqbn }} \
+          --fqbn "$FULL_FQBN" \
           --output-dir build \
-          ./ 
+          ./
 
     - name: Generate UF2 (SAMD21)
       if: matrix.board.family == 'SAMD21'
@@ -92,7 +106,7 @@ jobs:
     - name: Upload firmware
       uses: actions/upload-artifact@v4
       with:
-        name: firmware-${{ matrix.board.name }}
+        name: firmware-${{ matrix.board.fname }}
         path: build/*
 
     - name: Create Release
