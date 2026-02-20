@@ -1,8 +1,8 @@
 # Installation & Testing Guide
 
 ### 📥 1. Download Firmware
-* **[Latest Stable Release](releases/latest)**: Recommended for most users.
-* **[Unstable/Nightly Builds](actions/workflows/arduino-cli.yml)**: The very latest version from the code (Select a run -> scroll to Artifacts).
+* **[Latest Stable Release](https://github.com/marcel-licence/ml_synth_organ_example/releases/latest)**: Recommended for most users.
+* **[Unstable/Nightly Builds](https://github.com/marcel-licence/ml_synth_organ_example/actions/workflows/arduino-cli.yml)**: The very latest version from the code (Select a run -> scroll to Artifacts).
 
 ### 🛠 2. How to Flash
 1. **Connect** your board via USB.

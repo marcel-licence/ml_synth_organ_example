@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Arduino CLI CI build
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.board.family }} / ${{ matrix.board.name }}
+    name: Build ${{ matrix.board.arduino_board }} - ${{ matrix.board.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -18,23 +18,26 @@ jobs:
           - name: "Seeeduino XIAO"
             fname: "xiao_samd21"
             fqbn: "Seeeduino:samd:seeed_XIAO_m0"
-            family: "Seeed SAMD Boards"
+            family: "SAMD21"
+            arduino_board: "Seeed SAMD Boards"
             core: "Seeeduino:samd@1.8.5"
             urls: "https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json"
             extra_libs: ""
             options: ""
-          - name: "Rapberry Pi Pico"
+          - name: "Raspberry Pi Pico"
             fname: "pico_rp2040"
             fqbn: "rp2040:rp2040:rpipico"
-            family: "Raspberry Pi Pico/RP2040/RP2350"
+            family: "RP2xxx"
+            arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: "usbstack=tinyusb"
-          - name: "Rapberry Pi Pico 2"
+          - name: "Raspberry Pi Pico 2"
             fname: "pico2_rp2350"
             fqbn: "rp2040:rp2040:rpipico2"
-            family: "Raspberry Pi Pico/RP2040/RP2350"
+            family: "RP2xxx"
+            arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
@@ -42,18 +45,17 @@ jobs:
           - name: "Pimoroni PicoPlus2"
             fname: "pimoroni_pico_plus2"
             fqbn: "rp2040:rp2040:pimoroni_pico_plus_2"
-            family: "Raspberry Pi Pico/RP2040/RP2350"
+            family: "RP2xxx"
+            arduino_board: "Raspberry Pi Pico/RP2040/RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: ""
         exclude:
-          - board:
-              name: "Rapberry Pi Pico 2"
-          - board:
-              name: "Rapberry Pi Pico 2"
-          - board:
-              name: "Pimoroni PicoPlus2"
+          - board: { name: "Raspberry Pi Pico" }
+          - board: { name: "Raspberry Pi Pico 2" }
+          - board: { name: "Pimoroni PicoPlus2" }
+
     steps:
     - uses: actions/checkout@v4
     
@@ -67,11 +69,11 @@ jobs:
 
     - name: Install libraries
       run: |
-        arduino-cli lib install "Adafruit GFX Library@1.10.10"
-        arduino-cli lib install "Adafruit SSD1306@2.4.5"
-        arduino-cli lib install "Adafruit BusIO@1.14.1"
+        arduino-cli lib install \
+          "Adafruit GFX Library@1.10.10" \
+          "Adafruit SSD1306@2.4.5" \
+          "Adafruit BusIO@1.14.1"
 
-        # Install board-specific libs from the matrix
         if [ ! -z "${{ matrix.board.extra_libs }}" ]; then
           arduino-cli lib install ${{ matrix.board.extra_libs }}
         fi
@@ -84,7 +86,6 @@ jobs:
 
     - name: Compile sketch
       run: |
-        # Combine FQBN and options if options exist
         FULL_FQBN="${{ matrix.board.fqbn }}"
         if [ ! -z "${{ matrix.board.options }}" ]; then
           FULL_FQBN="${FULL_FQBN}:${{ matrix.board.options }}"
@@ -103,18 +104,15 @@ jobs:
         curl -L https://raw.githubusercontent.com/microsoft/uf2/master/utils/uf2families.json -o uf2families.json
         python3 uf2conv.py "$BIN_FILE" --family ${{ matrix.board.family }} --convert --output build/firmware.uf2
 
-    - name: Rename UF2 (RP2040/RP2350)
-      if: matrix.board.family != 'SAMD21'
-      run: |
-        # The Earle Philhower core usually creates the .uf2 automatically in the output dir
-        # We just rename it to a consistent name for the uploader
-        mv build/*.uf2 build/firmware.uf2 || true
+    - name: Rename UF2 (RP2xxx)
+      if: matrix.board.family == 'RP2xxx'
+      run: mv build/*.uf2 build/firmware.uf2 || true
 
     - name: Upload firmware
       uses: actions/upload-artifact@v4
       with:
         name: firmware-${{ matrix.board.fname }}
-        path: build/*
+        path: build/firmware.uf2
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
@@ -123,3 +121,10 @@ jobs:
         files: build/firmware.uf2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Summary
+      if: always()
+      run: |
+        echo "### Build Summary: ${{ matrix.board.name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Artifact:** firmware-${{ matrix.board.fname }}" >> $GITHUB_STEP_SUMMARY
