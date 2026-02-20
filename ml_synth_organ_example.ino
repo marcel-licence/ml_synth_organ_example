@@ -85,7 +85,7 @@
 #endif
 
 
-char shortName[] = "ML_Organ";
+const char shortName[] = "ML_Organ";
 
 
 #ifdef VOLUME_CONTROL_ENABLED
@@ -104,12 +104,28 @@ ML_LFO lfo1(SAMPLE_RATE, lfo1_buffer, SAMPLE_BUFFER_SIZE);
 ML_Vibrato vibrato(SAMPLE_RATE);
 #endif
 
+#define SERIAL_WAIT_READY_MAX_DURATION_MS   5000
 
 void setup()
 {
     /*
      * this code runs once
      */
+#ifdef BLINK_LED_PIN
+    Blink_Setup();
+    Blink_Fast(1);
+#endif
+
+#ifndef SWAP_SERIAL
+    Serial.begin(115200);
+
+    unsigned long start = millis();
+    while (!Serial && (millis() - start < SERIAL_WAIT_READY_MAX_DURATION_MS))
+    {
+        // wait max 2 seconds
+    }
+    delay(3000);
+#endif
 
     CapsPrintInfo();
 
@@ -119,11 +135,6 @@ void setup()
 #ifdef MIDI_USB_ENABLED
     Midi_Usb_Setup();
 #endif
-#endif
-
-#ifdef BLINK_LED_PIN
-    Blink_Setup();
-    Blink_Fast(1);
 #endif
 
 #ifdef ARDUINO_DAISY_SEED
@@ -136,8 +147,6 @@ void setup()
     /* only one hw serial use this for ESP */
     Serial.begin(115200);
     delay(500);
-#else
-    Serial.begin(115200);
 #endif
 
     Serial.println();
