@@ -19,21 +19,25 @@ jobs:
             family: "SAMD21"
             core: "Seeeduino:samd@1.8.5"
             urls: "https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json"
+            extra_libs: ""
           - name: "pico_rp2040"
             fqbn: "rp2040:rp2040:rpipico"
             family: "RP2040"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
+            extra_libs: "'MIDI Library@5.0.2'"
           - name: "pico2_rp2350"
             fqbn: "rp2040:rp2040:rpipico2"
             family: "RP2350"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
+            extra_libs: "'MIDI Library@5.0.2'"
           - name: "pimoroni_pico_plus"
             fqbn: "rp2040:rp2040:pimoronipicoplus"
             family: "RP2040"
             core: "rp2040:rp2040"
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
+            extra_libs: "'MIDI Library@5.0.2'"
 
     steps:
     - uses: actions/checkout@v4
@@ -51,6 +55,11 @@ jobs:
         arduino-cli lib install "Adafruit GFX Library@1.10.10"
         arduino-cli lib install "Adafruit SSD1306@2.4.5"
         arduino-cli lib install "Adafruit BusIO@1.14.1"
+
+        # Install board-specific libs from the matrix
+        if [ ! -z "${{ matrix.board.extra_libs }}" ]; then
+          arduino-cli lib install ${{ matrix.board.extra_libs }}
+        fi
 
     - name: Install Custom Libraries
       run: |
