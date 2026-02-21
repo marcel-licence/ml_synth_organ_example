@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Marcel Licence
+ * Copyright (c) 2025 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,20 @@
 
 //#define USE_ML_SYNTH_PRO
 
+
+#define MIDI_RECV_FROM_SERIAL
+#define SERIAL_BAUDRATE 115200
+#define MIDI_SERIAL_BAUDRATE SERIAL_BAUDRATE
+
+#define STATUS_SIMPLE
+
+
 //#define AUDIO_PASS_THROUGH
 
 
 /* use the following to test the output / codec */
 //#define OUTPUT_SAW_TEST
+//#define OUTPUT_SINE_TEST
 
 #ifdef TEENSYDUINO
 #include <Audio.h> /* required to access teensy audio defines */
@@ -98,7 +107,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ESP32
 
-#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
+#define BOARD_ML_SYNTH_V2 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
 //#define BOARD_ESP32_AUDIO_KIT_ES8388 /* activate this when using the ESP32 Audio Kit v2.2 with the ES8388 codec */
 //#define BOARD_ESP32_DOIT /* activate this when using the DOIT ESP32 DEVKIT V1 board */
@@ -109,6 +118,10 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN     BLINK_LED_PIN
 
 #define REVERB_ENABLED /* add simple reverb */
+
+#ifdef USE_ML_SYNTH_PRO
+#define VIBRATO_ENABLED /* uses lfo1 with the organ pro to add some vibrato to the sound */
+#endif
 
 #define MAX_DELAY   (SAMPLE_RATE/4)
 
@@ -165,11 +178,13 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef TEENSYDUINO // CORE_TEENSY
 
-#define LED_PIN 13 /* led pin on teensy 4.1 */
+#define BLINK_LED_PIN 13 /* led pin on teensy 4.1 */
 #define MIDI_PORT1_ACTIVE
 #define MIDI_SERIAL1_BAUDRATE   31250
 #define SAMPLE_BUFFER_SIZE AUDIO_BLOCK_SAMPLES
 #define SAMPLE_RATE AUDIO_SAMPLE_RATE
+#define VOLUME_CONTROL_ENABLED
+//#define VIBRATO_ENABLED
 
 #endif /* TEENSYDUINO */
 
@@ -195,7 +210,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ARDUINO_SEEED_XIAO_M0
 
-#define LED_PIN LED_BUILTIN
+#define BLINK_LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  22050
 
@@ -215,24 +230,53 @@ SoftwareSerial Serial2(RXD2, TXD2);
  *
  * Pinout @see https://www.raspberrypi-spy.co.uk/2021/01/pi-pico-pinout-and-power-pins/#prettyPhoto
  */
-#if (defined ARDUINO_RASPBERRY_PI_PICO) || (defined ARDUINO_GENERIC_RP2040)
-
+#ifdef ARDUINO_ARCH_RP2040
+#ifndef __ARM_FEATURE_DSP
 #ifdef ARDUINO_RASPBERRY_PI_PICO
 #define BLINK_LED_PIN LED_BUILTIN
 #else
 #define BLINK_LED_PIN 19
 #endif
-#define SAMPLE_BUFFER_SIZE  48
-#define SAMPLE_RATE  48000
 
 #define MIDI_RX2_PIN    5
 #define MIDI_PORT2_ACTIVE
 
 #define MIDI_USB_ENABLED /* connect RP2040 as a USB device */
 
+#if 1
 #define RP2040_AUDIO_PWM
+#else
+#define PICO_AUDIO_I2S
+#define PICO_AUDIO_I2S_DATA_PIN 26
+#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
+#endif
 
-#endif /* ARDUINO_RASPBERRY_PI_PICO, ARDUINO_GENERIC_RP2040 */
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  48000
+
+#endif /* __ARM_FEATURE_DSP */
+#endif /* ARDUINO_ARCH_RP2040 */
+
+#ifdef ARDUINO_ARCH_RP2040
+#ifdef __ARM_FEATURE_DSP
+//#define MIDI_STREAM_PLAYER_ENABLED /* playback MIDI files from LittleFS */
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE  48000
+#define PICO_AUDIO_I2S
+#define PICO_AUDIO_I2S_DATA_PIN 26
+#define PICO_AUDIO_I2S_CLOCK_PIN_BASE 27
+#define MIDI_RX1_PIN    13
+#define MIDI_TX1_PIN    12
+//#define USE_ML_SYNTH_PRO /* needs the pro library */
+#if defined(PICO_DEFAULT_LED_PIN)
+#define BLINK_LED_PIN PICO_DEFAULT_LED_PIN
+#elif defined(LED_BUILTIN)
+#define BLINK_LED_PIN LED_BUILTIN
+#else
+#define BLINK_LED_PIN 25
+#endif
+#endif
+#endif
 
 /*
  * Configuration for
@@ -268,7 +312,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define LED_PIN LED_USER_GREEN
 
 #define SAMPLE_BUFFER_SIZE  48
-#define SAMPLE_RATE  44100
+#define SAMPLE_RATE  48000
 
 //#define MIDI_PORT1_ACTIVE /* MIDI in : PIN A10  not tested*/
 #define MIDI_PORT2_ACTIVE /* MIDI in : PIN A3 */

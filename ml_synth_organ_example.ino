@@ -51,8 +51,10 @@
 /*
  * Library can be found on https://github.com/marcel-licence/ML_SynthTools
  */
+#include <caps_info.h>
 #ifdef USE_ML_SYNTH_PRO
 #include <ml_organ_pro.h>
+#include <ml_system.h>
 #else
 #include <ml_organ.h>
 #endif
@@ -64,7 +66,13 @@
 #include <ml_scope.h>
 #endif
 
+#include <ml_lfo.h>
+#ifdef VIBRATO_ENABLED
+#include <ml_vibrato.h>
+#endif
+
 #include <ml_types.h>
+#include <ml_utils.h>
 
 
 #define ML_SYNTH_INLINE_DECLARATION
@@ -77,21 +85,56 @@
 #endif
 
 
-char shortName[] = "ML_Organ";
+const char shortName[] = "ML_Organ";
 
+
+#ifdef VOLUME_CONTROL_ENABLED
+float mainVolume = 1.0f;
+float mainVolumeSet = 1.0f;
+#endif
+
+
+float lfo1_max = 1.0f;
+float lfo1_max_soft = 1.0f;
+float lfo1_buffer[SAMPLE_BUFFER_SIZE];
+float lfo1_buffer_scale[SAMPLE_BUFFER_SIZE];
+ML_LFO lfo1(SAMPLE_RATE, lfo1_buffer, SAMPLE_BUFFER_SIZE);
+
+#ifdef VIBRATO_ENABLED
+ML_Vibrato vibrato(SAMPLE_RATE);
+#endif
+
+#define SERIAL_WAIT_READY_MAX_DURATION_MS   5000
 
 void setup()
 {
     /*
      * this code runs once
      */
-#ifdef MIDI_USB_ENABLED
-    Midi_Usb_Setup();
-#endif
-
 #ifdef BLINK_LED_PIN
     Blink_Setup();
     Blink_Fast(1);
+#endif
+
+#ifndef SWAP_SERIAL
+    Serial.begin(115200);
+
+    unsigned long start = millis();
+    while (!Serial && (millis() - start < SERIAL_WAIT_READY_MAX_DURATION_MS))
+    {
+        // wait max 2 seconds
+    }
+    delay(3000);
+#endif
+
+    CapsPrintInfo();
+
+#ifdef ML_BOARD_SETUP
+    Board_Setup();
+#else
+#ifdef MIDI_USB_ENABLED
+    Midi_Usb_Setup();
+#endif
 #endif
 
 #ifdef ARDUINO_DAISY_SEED
@@ -104,8 +147,6 @@ void setup()
     /* only one hw serial use this for ESP */
     Serial.begin(115200);
     delay(500);
-#else
-    Serial.begin(115200);
 #endif
 
     Serial.println();
@@ -121,6 +162,7 @@ void setup()
 #endif
 #endif
 
+#ifndef ML_BOARD_SETUP
 #ifdef ESP8266
     Midi_Setup();
 #endif
@@ -144,12 +186,15 @@ void setup()
 #endif
 
 #endif
-
+#endif /* #ifndef ML_BOARD_SETUP */
 
 #ifdef USE_ML_SYNTH_PRO
-    OrganPro_Setup(&Serial, SAMPLE_RATE);
+#if !defined(SOC_CPU_HAS_FPU) && !defined(TEENSYDUINO) && !defined(__ARM_FEATURE_DSP)
+    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)\n");
+#endif
+    OrganPro_Setup(SAMPLE_RATE);
 #else
-    Organ_Setup(&Serial, SAMPLE_RATE);
+    Organ_Setup(SAMPLE_RATE);
 #endif
 
 #ifdef REVERB_ENABLED
@@ -172,7 +217,14 @@ void setup()
     static int16_t *delBuffer1 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     static int16_t *delBuffer2 = (int16_t *)malloc(sizeof(int16_t) * MAX_DELAY);
     Delay_Init2(delBuffer1, delBuffer2, MAX_DELAY);
+
+    Delay_SetLength(0, 0.5f);
+    Delay_SetOutputLevel(0, 0.0f);
+    Delay_SetFeedback(0, 0.02f);
 #endif
+
+    lfo1.setPhase(0);
+
 
 #ifdef MIDI_BLE_ENABLED
     midi_ble_setup();
@@ -199,15 +251,21 @@ void setup()
 #ifdef USE_ML_SYNTH_PRO
     OrganPro_NoteOn(0, 60, 127);
     OrganPro_SetLeslCtrl(127);
-#ifndef SOC_CPU_HAS_FPU
-    Serial.printf("Synth might not work because CPU does not have a FPU (floating point unit)");
-#endif
 #else
     Organ_NoteOn(0, 60, 127);
     Organ_SetLeslCtrl(127);
     Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
     Organ_PercussionSet(CTRL_ROTARY_ACTIVE);
 #endif
+#endif
+
+#ifdef VIBRATO_ENABLED
+#if 0
+    Lfo1_SetDepth(0, 32);
+#else
+    Lfo1_SetDepth(0, 0);
+#endif
+    Lfo1_SetSpeed(0, 71);
 #endif
 
 #ifdef MIDI_STREAM_PLAYER_ENABLED
@@ -234,13 +292,13 @@ void setup()
 TaskHandle_t Core0TaskHnd;
 
 inline
-void Core0TaskInit()
+void Core0TaskInit(void)
 {
     /* we need a second task for the terminal output */
     xTaskCreatePinnedToCore(Core0Task, "CoreTask0", 8000, NULL, 999, &Core0TaskHnd, 0);
 }
 
-void Core0TaskSetup()
+void Core0TaskSetup(void)
 {
     /*
      * init your stuff for core0 here
@@ -254,7 +312,7 @@ void Core0TaskSetup()
 #endif
 }
 
-void Core0TaskLoop()
+void Core0TaskLoop(void)
 {
     /*
      * put your loop stuff for core0 here
@@ -283,7 +341,7 @@ void Core0Task(void *parameter)
 }
 #endif /* ESP32 */
 
-void loop_1Hz()
+void loop_1Hz(void)
 {
 #ifdef CYCLE_MODULE_ENABLED
     CyclePrint();
@@ -341,6 +399,32 @@ void loop()
     float mono[SAMPLE_BUFFER_SIZE], left[SAMPLE_BUFFER_SIZE], right[SAMPLE_BUFFER_SIZE];
     OrganPro_Process_fl(mono, SAMPLE_BUFFER_SIZE);
 
+    /* reduce output to avoid clipping */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] *= 0.125f;
+    }
+
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+    }
+#endif
+
+    lfo1.Process(SAMPLE_BUFFER_SIZE);
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        lfo1_max_soft = lfo1_max * 0.01 + lfo1_max_soft * 0.99;
+        lfo1_buffer_scale[i] = lfo1_buffer[i] * lfo1_max_soft;
+    }
+
+#ifdef VIBRATO_ENABLED
+    vibrato.ProcessHQ(mono, lfo1_buffer_scale, mono, SAMPLE_BUFFER_SIZE);
+#endif
+
 #ifdef INPUT_TO_MIX
     Audio_Input(left, right);
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
@@ -382,8 +466,19 @@ void loop()
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
-#if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
-    float mono_f[SAMPLE_BUFFER_SIZE];
+
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        float mono_f = mono[i];
+        mono_f *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+        mono[i] = mono_f;
+    }
+#endif
+
+#ifdef REVERB_ENABLED    float mono_f[SAMPLE_BUFFER_SIZE];
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono_f[i] = mono[i];
@@ -398,8 +493,13 @@ void loop()
         mono[i] = mono_f[i];
     }
 #endif
-#endif /* #if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED) */
-    Audio_OutputMono(mono);
+#ifdef PICO_AUDIO_I2S
+    /* we expect 32 bit audio and the buffer used only 16 results in no sounds */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono[i] <<= 16;
+    }
+#endif   Audio_OutputMono(mono);
 #endif
 }
 
@@ -419,6 +519,32 @@ void App_UsbMidiShortMsgReceived(uint8_t *msg)
 /*
  * MIDI callbacks
  */
+inline void App_MainVolume(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+#ifdef VOLUME_CONTROL_ENABLED
+    mainVolumeSet = log10fromU7(value, -2, 0);
+    Status_ValueChangedFloat("Main Volume", mainVolumeSet);
+#endif
+}
+
+void Lfo1_SetSpeed(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+    float f = log10fromU7(value, -2, 3);
+    lfo1.setFrequency(f);
+}
+
+void Lfo1_SetDepth(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+    if (value > 0)
+    {
+        lfo1_max = log2fromU7(value, -6, 0);
+    }
+    else
+    {
+        lfo1_max = 0;
+    }
+}
+
 inline void Organ_PercSetMidi(uint8_t setting, uint8_t value)
 {
     if (value > 0)
