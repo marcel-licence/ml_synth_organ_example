@@ -478,14 +478,18 @@ void loop()
     }
 #endif
 
-#ifdef REVERB_ENABLED    float mono_f[SAMPLE_BUFFER_SIZE];
+#if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
+    float mono_f[SAMPLE_BUFFER_SIZE];
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono_f[i] = mono[i];
     }
+#endif
+
 #ifdef OLED_OSC_DISP_ENABLED
     ScopeOled_AddSamples(mono_f, mono_f, SAMPLE_BUFFER_SIZE);
 #endif
+
 #ifdef REVERB_ENABLED
     Reverb_Process(mono_f, SAMPLE_BUFFER_SIZE); /* post reverb */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
@@ -493,13 +497,16 @@ void loop()
         mono[i] = mono_f[i];
     }
 #endif
+
 #ifdef PICO_AUDIO_I2S
     /* we expect 32 bit audio and the buffer used only 16 results in no sounds */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono[i] <<= 16;
     }
-#endif   Audio_OutputMono(mono);
+#endif
+
+    Audio_OutputMono(mono);
 #endif
 }
 
