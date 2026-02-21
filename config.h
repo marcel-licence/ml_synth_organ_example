@@ -210,7 +210,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  */
 #ifdef ARDUINO_SEEED_XIAO_M0
 
-#define LED_PIN LED_BUILTIN
+#define BLINK_LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  22050
 
@@ -259,7 +259,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #ifdef ARDUINO_ARCH_RP2040
 #ifdef __ARM_FEATURE_DSP
-#define MIDI_STREAM_PLAYER_ENABLED /* playback MIDI files from LittleFS */
+//#define MIDI_STREAM_PLAYER_ENABLED /* playback MIDI files from LittleFS */
 #define SAMPLE_BUFFER_SIZE  48
 #define SAMPLE_RATE  48000
 #define PICO_AUDIO_I2S
@@ -272,6 +272,8 @@ SoftwareSerial Serial2(RXD2, TXD2);
 #define BLINK_LED_PIN PICO_DEFAULT_LED_PIN
 #elif defined(LED_BUILTIN)
 #define BLINK_LED_PIN LED_BUILTIN
+#else
+#define BLINK_LED_PIN 25
 #endif
 #endif
 #endif
