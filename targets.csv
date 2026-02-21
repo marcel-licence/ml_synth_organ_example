@@ -1,0 +1,11 @@
+fqbn;version;config
+STMicroelectronics:stm32:Disco;2.5.0;PNUM=DISCO_F407VG
+STMicroelectronics:stm32:GenH7;2.5.0;PNUM=DAISY_SEED
+Seeeduino:samd:seeed_XIAO_m0;1.8.2;
+esp8266:esp8266:d1_mini;3.0.2;
+#espressif:esp32:d1_mini32;2.0.4;PSRAM=disabled\nPARTITION_SCHEME=no_ota
+espressif:esp32:d1_mini32;latest;PSRAM=disabled\nPARTITION_SCHEME=no_ota
+espressif:esp32:esp32;latest;PSRAM=disabled\nPARTITION_SCHEME=no_ota
+rp2040:rp2040:generic;latest;USBSTACK=tinyusb
+rp2040:rp2040:rpipico;latest;USBSTACK=tinyusb
+#teensy:avr:teensy41;1.8.5;TEENSY_USB=serialmidiaudio
