@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Marcel Licence
+ * Copyright (c) 2022 Marcel Licence
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,9 @@
 #endif
 
 
+#define ALL_ORGAN_CHANNELS  (MIDI_CHANNEL_MASK | MIDI_CHANNEL_0 | MIDI_CHANNEL_1 | MIDI_CHANNEL_2)
+
+
 #ifdef AUDIO_KIT_BUTTON_ANALOG
 audioKitButtonCb audioKitButtonCallback = NULL;
 #endif
@@ -73,10 +76,17 @@ struct midiControllerMapping edirolMapping[] =
     { 0x2, 0x50, "A3", NULL, NULL, 2},
     { 0x3, 0x50, "A4", NULL, NULL, 3},
 
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    { 0x4, 0x50, "A5", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PAUSE},
+    { 0x5, 0x50, "A6", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_STOP},
+    { 0x6, 0x50, "A7", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_PLAY},
+    { 0x7, 0x50, "A8", NULL, MidiStreamPlayerCtrl, MIDI_STREAM_PLAYER_CTRL_SKIP},
+#else
     { 0x4, 0x50, "A5", NULL, NULL, 0},
     { 0x5, 0x50, "A6", NULL, NULL, 1},
     { 0x6, 0x50, "A7", NULL, NULL, 2},
     { 0x7, 0x50, "A8", NULL, NULL, 0},
+#endif
 
     { 0x0, 0x53, "A9", NULL, NULL, 0},
 
@@ -94,7 +104,7 @@ struct midiControllerMapping edirolMapping[] =
     { 0x1, 0x53, "B9", NULL, NULL, 0},
 
     /* pedal */
-    { 0x0, 0x0b, "VolumePedal", NULL, NULL, 0},
+    { ALL_ORGAN_CHANNELS, 0x0b, "VolumePedal", NULL, App_MainVolume, 0},
 
     /* slider */
     { 0x0, 0x11, "S1", NULL, Organ_SetDrawbarInv, 0},
@@ -110,20 +120,39 @@ struct midiControllerMapping edirolMapping[] =
     { 0x1, 0x12, "S9", NULL, Organ_SetDrawbarInv, 8},
 
     /* rotary */
+#ifdef MIDI_STREAM_PLAYER_ENABLED
+    { 0x0, 0x10, "R1", NULL, MidiStreamPlayerTempo, 0},
+#else
     { 0x0, 0x10, "R1", NULL, Organ_SetCtrl, 0},
+#endif
     { 0x1, 0x10, "R2", NULL, Organ_SetCtrl, 1},
     { 0x2, 0x10, "R3", NULL, Organ_SetCtrl, 2},
+#if 0
     { 0x3, 0x10, "R4", NULL, Organ_SetCtrl, 3},
-
     { 0x4, 0x10, "R5", NULL, Organ_SetCtrl, 4},
     { 0x5, 0x10, "R6", NULL, Organ_SetCtrl, 5},
-    { 0x6, 0x10, "R7", NULL, Organ_SetCtrl, 6},
-    { 0x7, 0x10, "R8", NULL, Organ_SetCtrl, 7},
+#else
+#ifdef MAX_DELAY
+    { 0x3, 0x10, "R4", NULL, Delay_SetOutputLevelInt, 3},
 
-    { 0x0, 0x12, "R9", NULL, Organ_SetCtrl, 8},
+    { 0x4, 0x10, "R5", NULL, Delay_SetFeedbackInt, 4},
+    { 0x5, 0x10, "R6", NULL, Delay_SetLength, 5},
+#endif
+#endif
+    { 0x6, 0x10, "R7", NULL, Lfo1_SetDepth, 6},
+    { 0x7, 0x10, "R8", NULL, Lfo1_SetSpeed, 7},
+
+    { 0x0, 0x12, "R9", NULL, Reverb_SetLevelInt, 8},
 
     /* Central slider */
     { 0x0, 0x13, "H1", NULL, Organ_SetLeslieSpeedNorm, 0},
+
+
+    /* MIDI defaults */
+    { ALL_ORGAN_CHANNELS, 7, "Volume", NULL, App_MainVolume, 0},
+    { 0x0, 91, "Reverb", NULL, Reverb_SetLevelInt, 8},
+    { 0x0, 93, "Chorus", NULL, Organ_SetLeslieSpeedNorm, 0},
+
 };
 
 struct midiMapping_s midiMapping =
@@ -138,6 +167,9 @@ struct midiMapping_s midiMapping =
 #endif
     NULL,
     Organ_ModulationWheel,
+    NULL, /* assign program change callback here! */
+    NULL,
+    NULL,
     edirolMapping,
     sizeof(edirolMapping) / sizeof(edirolMapping[0]),
 };
