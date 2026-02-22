@@ -468,7 +468,11 @@ void loop()
 #endif
 #else
     int32_t mono[SAMPLE_BUFFER_SIZE];
+#ifdef ESP32
     Organ_Process_Buf((int *)mono, SAMPLE_BUFFER_SIZE);
+#else
+    Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
+#endif
 
 #ifdef VOLUME_CONTROL_ENABLED
     /* smooth main organ volume */

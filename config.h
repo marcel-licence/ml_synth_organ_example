@@ -105,7 +105,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  * Configuration for
  * Board: "ESP32 Dev Module" or similar
  */
-#ifdef ESP32
+#if (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV)
 
 #define BOARD_ML_SYNTH_V2 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
@@ -166,7 +166,24 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 //#define MIDI_VIA_USB_ENABLED /* activate this when connected to the USB host breakout board */
 
-#endif /* ESP32 */
+#endif /* (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) */
+
+
+#if (defined ARDUINO_LOLIN_S2_MINI) || (defined ARDUINO_ESP32S2_DEV)
+
+#define SAMPLE_RATE 44100
+#define SAMPLE_SIZE_16BIT
+#define SAMPLE_BUFFER_SIZE  48
+
+#define I2S_BCLK_PIN -1
+#define I2S_WCLK_PIN -1
+#define I2S_DOUT_PIN 17
+#define I2S_DIRECT_OUT
+#define AUDIO_MONO_DOWNMIX
+#define AUDIO_OUT_MONO
+
+#endif
+
 
 /*
  * Configuration for
@@ -187,6 +204,24 @@ SoftwareSerial Serial2(RXD2, TXD2);
 //#define VIBRATO_ENABLED
 
 #endif /* TEENSYDUINO */
+
+
+/*
+ * Configuration for
+ * Board: "Generic STM32F4 Series"
+ * Board part number: "BlackPill F411CE"
+ */
+#ifdef ARDUINO_BLACKPILL_F411CE
+
+#define LED_PIN LED_BUILTIN
+#define SAMPLE_BUFFER_SIZE  48
+#define SAMPLE_RATE 48000
+
+#define MIDI_PORT1_ACTIVE
+#define MIDI_BAUDRATE   31250
+
+#endif /* ARDUINO_BLACKPILL_F411CE */
+
 
 /*
  * Configuration for
