@@ -105,7 +105,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  * Configuration for
  * Board: "ESP32 Dev Module" or similar
  */
-#if (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV)
+#if (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV) && (!defined ARDUINO_ESP32C3_DEV) && (!defined ARDUINO_SEEED_XIAO_M0)
 
 #define BOARD_ML_SYNTH_V2 /* activate this when using the ML PCB V1 */
 //#define BOARD_ESP32_AUDIO_KIT_AC101 /* activate this when using the ESP32 Audio Kit v2.2 with the AC101 codec */
@@ -166,7 +166,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 //#define MIDI_VIA_USB_ENABLED /* activate this when connected to the USB host breakout board */
 
-#endif /* (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) */
+#endif /* (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV) && (!defined ARDUINO_ESP32C3_DEV) && (!defined ARDUINO_SEEED_XIAO_M0) */
 
 
 #if (defined ARDUINO_LOLIN_S2_MINI) || (defined ARDUINO_ESP32S2_DEV)
@@ -243,7 +243,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
  * Configuration for
  * Board: "Seeeduino XIAO"
  */
-#ifdef ARDUINO_SEEED_XIAO_M0
+#if (defined ARDUINO_SEEED_XIAO_M0) || (defined SEEED_XIAO_M0)
 
 #define BLINK_LED_PIN LED_BUILTIN
 #define SAMPLE_BUFFER_SIZE  48
@@ -251,7 +251,7 @@ SoftwareSerial Serial2(RXD2, TXD2);
 
 #define MIDI_PORT1_ACTIVE
 
-#endif /* ARDUINO_SEEED_XIAO_M0 */
+#endif /* (defined ARDUINO_SEEED_XIAO_M0) || (defined SEEED_XIAO_M0) */
 
 /*
  * Configuration for
