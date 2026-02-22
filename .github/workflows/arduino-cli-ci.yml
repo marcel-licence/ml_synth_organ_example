@@ -21,55 +21,61 @@ jobs:
           - name: "ESP32 Dev Module"
             fname: "esp32"
             fqbn: "esp32:esp32:esp32"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
             options: ""
+            manual_only: false
         
           - name: "ESP32S2 Dev Module"
             fname: "esp32s2"
             fqbn: "esp32:esp32:esp32s2"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
             options: ""
+            manual_only: false
 
           - name: "LOLIN S2 Mini"
             fname: "lolin_s2_mini"
             fqbn: "esp32:esp32:lolin_s2_mini"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
             options: ""
+            manual_only: false
 
           - name: "ESP32S3 Dev Module"
             fname: "esp32s3"
             fqbn: "esp32:esp32:esp32s3"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
             options: ""
+            manual_only: false
         
           - name: "ESP32C3 Dev Module"
             fname: "esp32c3"
             fqbn: "esp32:esp32:esp32c3"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
             options: ""
+            manual_only: true
             
           - name: "XIAO_ESP32C3"
             fname: "xiao_esp32c3"
             fqbn: "esp32:esp32:XIAO_ESP32C3"
-            core: "esp32:esp32@3.2.1"
+            core: "esp32:esp32@3.3.7"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             extra_libs: ""
             options: ""
+            manual_only: true
 
           # ESP8266
           - name: "Generic ESP8266 Module"
@@ -80,6 +86,7 @@ jobs:
             family: "ESP8266"
             extra_libs: ""
             options: ""
+            manual_only: false
 
           # RP2040
           - name: "Raspberry Pi Pico"
@@ -91,6 +98,7 @@ jobs:
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: "usbstack=tinyusb"
+            manual_only: false
 
           - name: "Raspberry Pi Pico 2"
             fname: "pico2_rp2350"
@@ -101,6 +109,7 @@ jobs:
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: "usbstack=tinyusb"
+            manual_only: false
 
           - name: "Pimoroni PicoPlus2"
             fname: "pimoroni_pico_plus2"
@@ -111,6 +120,7 @@ jobs:
             urls: "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json"
             extra_libs: "'MIDI Library@5.0.2'"
             options: "usbstack=tinyusb"
+            manual_only: false
 
           # Seeeduino
           - name: "Seeeduino XIAO (SAMD21)"
@@ -122,6 +132,7 @@ jobs:
             urls: "https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json"
             extra_libs: ""
             options: ""
+            manual_only: false
 
           # STM32
           - name: "Generic STM32F4 Series - BlackPill F411CE"
@@ -132,6 +143,7 @@ jobs:
             family: "STM32"
             extra_libs: ""
             options: ""
+            manual_only: false
 
           - name: "Generic STM32H7 Series - Daisy Seed"
             fname: "genh7_daisy_seed"
@@ -141,6 +153,7 @@ jobs:
             family: "STM32H7"
             extra_libs: "DaisyDuino@1.7.0"
             options: ""
+            manual_only: false
 
           # Teensy
           - name: "Teensy 4.1"
@@ -151,6 +164,12 @@ jobs:
             family: "Teensy"
             extra_libs: ""
             options: ""
+            manual_only: true
+
+    if: >
+      github.event_name == 'workflow_dispatch'
+      || matrix.manual_only == false
+
     steps:
     - uses: actions/checkout@v4
       with:
