@@ -168,7 +168,7 @@ jobs:
 
     if: >
       github.event_name == 'workflow_dispatch'
-      || matrix.manual_only == false
+      || matrix.board.manual_only == false
 
     steps:
     - uses: actions/checkout@v4
