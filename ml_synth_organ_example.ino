@@ -57,7 +57,9 @@
 #include <ml_system.h>
 #else
 #include <ml_organ.h>
+#ifdef ESP32
 void Organ_Process_Buf(int *buf, uint8_t len);
+#endif
 #endif
 #ifdef REVERB_ENABLED
 #include <ml_reverb.h>
