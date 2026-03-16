@@ -485,12 +485,19 @@ void loop()
     }
 #endif
 
-#ifdef REVERB_ENABLED
+#if (defined REVERB_ENABLED) || (defined OLED_OSC_DISP_ENABLED)
     float mono_f[SAMPLE_BUFFER_SIZE];
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono_f[i] = mono[i];
     }
+#endif
+
+#ifdef OLED_OSC_DISP_ENABLED
+    ScopeOled_AddSamples(mono_f, mono_f, SAMPLE_BUFFER_SIZE);
+#endif
+
+#ifdef REVERB_ENABLED
     Reverb_Process(mono_f, SAMPLE_BUFFER_SIZE); /* post reverb */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
