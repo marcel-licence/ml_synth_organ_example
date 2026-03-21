@@ -84,6 +84,7 @@
 #include "config/config_daisy_seed.h"
 #include "config/config_disco_f407vg.h"
 #include "config/config_esp32.h"
+#include "config/config_esp32c3.h"
 #include "config/config_esp32s2.h"
 #include "config/config_esp8266.h"
 #include "config/config_generic_f407vgtx.h"
@@ -98,7 +99,7 @@
  * include the board configuration
  * there you will find the most hardware depending pin settings
  */
-#include <ml_boards.h> /* requires the ML_Synth library:  https://github.com/marcel-licence/ML_SynthTools */
+#include <ml_boards.h> /* requires library ML_SynthTools: https://github.com/marcel-licence/ML_SynthTools */
 
 
 #endif /* CONFIG_H_ */
