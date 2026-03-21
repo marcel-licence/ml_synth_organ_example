@@ -166,6 +166,13 @@ jobs:
             options: ""
             manual_only: true
 
+        exclude:
+          - board:
+              name: "XIAO_ESP32C3"
+
+          - board:
+              name: "Teensy 4.1"
+
     steps:
     - uses: actions/checkout@v4
       with:
