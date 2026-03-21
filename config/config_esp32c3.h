@@ -29,26 +29,24 @@
  */
 
 /**
- * @file ml_inline.ino
+ * @file config_esp32c3.h
  * @author Marcel Licence
  *
- * @brief This file inlines library functions
- * @see https://github.com/marcel-licence/ML_SynthTools
+ * @brief Configuration for ESP32C3
  */
 
 
-#include "config.h"
+#if (defined ARDUINO_ESP32C3_DEV) || (defined ARDUINO_XIAO_ESP32C3)
 
 
-#define ML_SYNTH_INLINE_DECLARATION
-#include <ml_inline.h>
-#undef ML_SYNTH_INLINE_DECLARATION
+#define I2S_BCLK_PIN -1
+#define I2S_WCLK_PIN -1
+#define I2S_DOUT_PIN 17
+#define I2S_DIRECT_OUT
 
-#define ML_SYNTH_INLINE_DEFINITION
-#include <ml_inline.h>
-#ifdef OLED_OSC_DISP_ENABLED
-#define ML_SCOPE_OLED
-#include <ml_scope_oled_inline.h>
-#endif
-#undef ML_SYNTH_INLINE_DEFINITION
+#define SAMPLE_RATE 44100
+#define SAMPLE_SIZE_16BIT
+#define SAMPLE_BUFFER_SIZE  48
 
+
+#endif /* (defined ARDUINO_ESP32C3_DEV) || (defined ARDUINO_XIAO_ESP32C3) */

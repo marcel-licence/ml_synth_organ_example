@@ -47,6 +47,23 @@
 #endif
 
 
+#include "config.h"
+
+#include "app.h"
+
+#ifdef USE_ML_SYNTH_PRO
+#include <ml_organ_pro.h>
+#else
+#include <ml_organ.h>
+#endif
+
+#ifdef REVERB_ENABLED
+#include <ml_reverb.h>
+#endif
+
+#include <ml_delay.h>
+
+
 #define ALL_ORGAN_CHANNELS  (MIDI_CHANNEL_MASK | MIDI_CHANNEL_0 | MIDI_CHANNEL_1 | MIDI_CHANNEL_2)
 
 
@@ -142,7 +159,9 @@ struct midiControllerMapping edirolMapping[] =
     { 0x6, 0x10, "R7", NULL, Lfo1_SetDepth, 6},
     { 0x7, 0x10, "R8", NULL, Lfo1_SetSpeed, 7},
 
+#ifdef REVERB_ENABLED
     { 0x0, 0x12, "R9", NULL, Reverb_SetLevelInt, 8},
+#endif
 
     /* Central slider */
     { 0x0, 0x13, "H1", NULL, Organ_SetLeslieSpeedNorm, 0},
@@ -150,7 +169,9 @@ struct midiControllerMapping edirolMapping[] =
 
     /* MIDI defaults */
     { ALL_ORGAN_CHANNELS, 7, "Volume", NULL, App_MainVolume, 0},
+#ifdef REVERB_ENABLED
     { 0x0, 91, "Reverb", NULL, Reverb_SetLevelInt, 8},
+#endif
     { 0x0, 93, "Chorus", NULL, Organ_SetLeslieSpeedNorm, 0},
 
 };
