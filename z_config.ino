@@ -47,6 +47,24 @@
 #endif
 
 
+
+#include "config.h"
+
+#include "app.h"
+
+#ifdef USE_ML_SYNTH_PRO
+#include <ml_organ_pro.h>
+#else
+#include <ml_organ.h>
+#endif
+
+#ifdef REVERB_ENABLED
+#include <ml_reverb.h>
+#endif
+
+#include <ml_delay.h>;
+
+
 #define ALL_ORGAN_CHANNELS  (MIDI_CHANNEL_MASK | MIDI_CHANNEL_0 | MIDI_CHANNEL_1 | MIDI_CHANNEL_2)
 
 
