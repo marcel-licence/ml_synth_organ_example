@@ -232,7 +232,7 @@ jobs:
 
     - name: Rename UF2 (RP2xxx)
       if: contains(matrix.board.family, 'rp2')
-      run: mv build/${{ matrix.board.fname }}/*.uf2 build/firmware.uf2 || true
+      run: mv build/${{ matrix.board.fname }}/*.uf2 build/${{ matrix.board.fname }}/firmware.uf2 || true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
@@ -248,5 +248,6 @@ jobs:
           build/${{ matrix.board.fname }}/**/*.bin
           build/${{ matrix.board.fname }}/**/*.uf2
           build/${{ matrix.board.fname }}/**/*.hex
+          build/${{ matrix.board.fname }}/**/*.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
