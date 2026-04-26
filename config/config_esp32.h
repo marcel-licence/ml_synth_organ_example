@@ -55,6 +55,9 @@
 
 #define MAX_DELAY   (SAMPLE_RATE/4)
 
+#define VOLUME_CONTROL_ENABLED
+#define EXPRESSION_CONTROL_ENABLED
+
 //#define MIDI_STREAM_PLAYER_ENABLED /* activate this to use the midi stream playback module */
 
 /* use this to display a scope on the oled display */

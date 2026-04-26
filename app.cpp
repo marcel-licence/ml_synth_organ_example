@@ -92,6 +92,8 @@ const char shortName[] = "ML_Organ";
 #ifdef VOLUME_CONTROL_ENABLED
 float mainVolume = 1.0f;
 float mainVolumeSet = 1.0f;
+float expression = 1.0f;
+float expressionSet = 1.0f;
 #endif
 
 
@@ -371,12 +373,12 @@ void App_Loop(void)
         mono[i] *= 0.125f;
     }
 
-#ifdef VOLUME_CONTROL_ENABLED
+#ifdef EXPRESSION_CONTROL_ENABLED
     /* smooth main organ volume */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
-        mono[i] *= mainVolume;
-        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+        mono[i] *= expression;
+        expression = (expression * 0.9995f) + (expressionSet * 0.0005f);
     }
 #endif
 
@@ -412,6 +414,16 @@ void App_Loop(void)
     Delay_Process_Buff2(left, right, SAMPLE_BUFFER_SIZE);
 #endif
 
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        left[i] *= mainVolume;
+        right[i] *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+    }
+#endif
+
     /*
      * Output the audio
      */
@@ -433,13 +445,13 @@ void App_Loop(void)
     int32_t mono[SAMPLE_BUFFER_SIZE];
     Organ_Process_Buf(mono, SAMPLE_BUFFER_SIZE);
 
-#ifdef VOLUME_CONTROL_ENABLED
+#ifdef EXPRESSION_CONTROL_ENABLED
     /* smooth main organ volume */
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         float mono_f = mono[i];
-        mono_f *= mainVolume;
-        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+        mono_f *= expression;
+        expression = (expression * 0.9995f) + (expressionSet * 0.0005f);
         mono[i] = mono_f;
     }
 #endif
@@ -451,6 +463,16 @@ void App_Loop(void)
         mono_f[i] = mono[i];
     }
     Reverb_Process(mono_f, SAMPLE_BUFFER_SIZE); /* post reverb */
+
+#ifdef VOLUME_CONTROL_ENABLED
+    /* smooth main organ volume */
+    for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
+    {
+        mono_f[i] *= mainVolume;
+        mainVolume = (mainVolume * 0.9995f) + (mainVolumeSet * 0.0005f);
+    }
+#endif
+
     for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
     {
         mono[i] = mono_f[i];
@@ -490,6 +512,14 @@ void App_MainVolume(uint8_t unused __attribute__((unused)), uint8_t value)
 #ifdef VOLUME_CONTROL_ENABLED
     mainVolumeSet = log10fromU7(value, -2, 0);
     Status_ValueChangedFloat("Main Volume", mainVolumeSet);
+#endif
+}
+
+void App_Expression(uint8_t unused __attribute__((unused)), uint8_t value)
+{
+#ifdef EXPRESSION_CONTROL_ENABLED
+    expressionSet = log10fromU7(value, -2, 0);
+    Status_ValueChangedFloat("Expression", expressionSet);
 #endif
 }
 

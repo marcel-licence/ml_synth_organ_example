@@ -35,7 +35,7 @@
  *
  * @brief Declarations of the app
  */
- 
+
 
 #ifndef APP_H_
 #define APP_H_
@@ -54,6 +54,7 @@ void App_Loop1(void);
 void Organ_ModulationWheel(uint8_t unused __attribute__((unused)), uint8_t value);
 void Organ_SetLeslieSpeedNorm(uint8_t unused __attribute__((unused)), uint8_t speed);
 void App_MainVolume(uint8_t unused __attribute__((unused)), uint8_t value);
+void App_Expression(uint8_t unused __attribute__((unused)), uint8_t value);
 //void Reverb_SetLevelInt(uint8_t unused __attribute__((unused)), uint8_t value);
 void Delay_SetOutputLevelInt(uint8_t unused __attribute__((unused)), uint8_t value);
 void Delay_SetFeedbackInt(uint8_t unused __attribute__((unused)), uint8_t value);

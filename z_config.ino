@@ -169,6 +169,7 @@ struct midiControllerMapping edirolMapping[] =
 
     /* MIDI defaults */
     { ALL_ORGAN_CHANNELS, 7, "Volume", NULL, App_MainVolume, 0},
+    { ALL_ORGAN_CHANNELS, 11, "Expression", NULL, App_Expression, 0},
 #ifdef REVERB_ENABLED
     { 0x0, 91, "Reverb", NULL, Reverb_SetLevelInt, 8},
 #endif
