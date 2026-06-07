@@ -21,7 +21,7 @@ jobs:
           - name: "ESP32 Dev Module"
             fname: "esp32"
             fqbn: "esp32:esp32:esp32"
-            core: "esp32:esp32@3.3.7"
+            core: "esp32:esp32@3.3.10"
             urls: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json"
             family: "ESP32"
             extra_libs: ""
