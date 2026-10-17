@@ -1,0 +1,37 @@
+@startuml
+title Organ Signal Chain (Current Implementation)
+
+start
+
+:Organ synthesis;
+:Pre-gain (0.125);
+
+if (Expression enabled?) then (yes)
+:Apply expression (smoothed);
+endif
+
+:LFO processing;
+:Vibrato (optional);
+
+if (Audio input mix?) then (yes)
+:Mix external input;
+endif
+
+if (Reverb enabled?) then (yes)
+:Reverb;
+endif
+
+:Rotary (Leslie);
+
+if (Delay enabled?) then (yes)
+:Delay;
+endif
+
+if (Main volume enabled?) then (yes)
+:Apply main volume (smoothed);
+endif
+
+:Audio output;
+
+stop
+@enduml
