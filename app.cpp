@@ -304,7 +304,9 @@ void App_Loop1(void)
 #endif
 
 #ifdef OLED_OSC_DISP_ENABLED
+#if 0 /* there is some bug with the i2c driver introduced with the new esp32 board lib */
     ScopeOled_Process();
+#endif
 #endif
 }
 #endif /* ESP32 */

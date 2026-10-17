@@ -54,7 +54,8 @@
 
 #define NOTE_ON_AFTER_SETUP /* used to get a test tone without MIDI input. Can be deactivated */
 
-//#define USE_ML_SYNTH_PRO
+#define USE_ML_SYNTH_PRO
+// #define MIDI_MONITOR_ENABLED /* can be used but might cause clicks and artifacts in audio due to the load caused by debug output */
 
 
 #define MIDI_RECV_FROM_SERIAL

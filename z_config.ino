@@ -140,12 +140,12 @@ struct midiControllerMapping edirolMapping[] =
 #ifdef MIDI_STREAM_PLAYER_ENABLED
     { 0x0, 0x10, "R1", NULL, MidiStreamPlayerTempo, 0},
 #else
-    { 0x0, 0x10, "R1", NULL, Organ_SetCtrl, 0},
+    { 0x0, 0x10, "R1", NULL, Lfo1_SetSpeed, 0},
 #endif
-    { 0x1, 0x10, "R2", NULL, Organ_SetCtrl, 1},
-    { 0x2, 0x10, "R3", NULL, Organ_SetCtrl, 2},
+    { 0x1, 0x10, "R2", NULL, Lfo1_SetDepth, 1},
+    { 0x2, 0x10, "R3", NULL, App_Expression, 2},
 #if 0
-    { 0x3, 0x10, "R4", NULL, Organ_SetCtrl, 3},
+    { 0x3, 0x10, "R4", NULL, App_MainVolume, 3},
     { 0x4, 0x10, "R5", NULL, Organ_SetCtrl, 4},
     { 0x5, 0x10, "R6", NULL, Organ_SetCtrl, 5},
 #else
